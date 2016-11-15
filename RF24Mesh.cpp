@@ -15,10 +15,10 @@ RF24Mesh::RF24Mesh( RF24& _radio,RF24Network& _network ): radio(_radio),network(
 
 bool RF24Mesh::begin(uint8_t channel, rf24_datarate_e data_rate, uint32_t timeout){
   //delay(1); // Found problems w/SPIDEV & ncurses. Without this, getch() returns a stream of garbage
-  radio.begin();
+  RF24_begin(&radio);
   radio_channel = channel;
-  radio.setChannel(radio_channel);
-  radio.setDataRate(data_rate);  
+  RF24_setChannel(&radio,radio_channel);
+  RF24_setDataRate(&radio,data_rate);  
   network.returnSysMsgs = 1;
   
   if(getNodeID()){ //Not master node
@@ -124,8 +124,8 @@ bool RF24Mesh::write(const void* data, uint8_t msg_type, size_t size, uint8_t no
 void RF24Mesh::setChannel(uint8_t _channel){
 
 	radio_channel = _channel;
-	radio.setChannel(radio_channel);
-	radio.startListening();
+	RF24_setChannel(&radio,radio_channel);
+	RF24_startListening(&radio);
 }
 /*****************************************************/
 void RF24Mesh::setChild(bool allow){
@@ -143,7 +143,7 @@ bool RF24Mesh::checkConnection(){
 	bool ok = 0;
 	while(count-- && mesh_address != MESH_DEFAULT_ADDRESS){
         update();
-        if(radio.rxFifoFull() || (network.networkFlags & 1)){
+        if(RF24_rxFifoFull(&radio) || (network.networkFlags & 1)){
           return 1;
         }
         RF24NetworkHeader header(00,NETWORK_PING);
@@ -151,7 +151,7 @@ bool RF24Mesh::checkConnection(){
 		if(ok){break;}
 		delay(103);
 	}
-    if(!ok){ radio.stopListening(); }
+    if(!ok){ RF24_stopListening(&radio); }
 	return ok;
 	
 }
@@ -238,10 +238,10 @@ bool RF24Mesh::releaseAddress(){
 
 uint16_t RF24Mesh::renewAddress(uint32_t timeout){
 
-  if(radio.available()){ return 0; }
+  if(RF24_available(&radio)){ return 0; }
   uint8_t reqCounter = 0;
   uint8_t totalReqs = 0;
-  radio.stopListening();
+  RF24_stopListening(&radio);
 
   network.networkFlags |= 2;
   delay(10);
@@ -280,7 +280,7 @@ bool RF24Mesh::requestAddress(uint8_t level){
     
     while(1){
         #if defined (MESH_DEBUG_SERIAL) || defined (MESH_DEBUG_PRINTF)
-		bool goodSignal = radio.testRPD();
+		bool goodSignal = RF24_testRPD(&radio);
         #endif
 		if(network.update() == NETWORK_POLL){
             memcpy(&contactNode[pollCount],&network.frame_buffer[0],sizeof(uint16_t));
@@ -395,7 +395,7 @@ bool RF24Mesh::requestAddress(uint8_t level){
 	#endif
 	mesh_address = newAddress;
 
-    radio.stopListening();
+    RF24_stopListening(&radio);
     delay(10);
 	network.begin(mesh_address);
 	header.to_node = 00;
