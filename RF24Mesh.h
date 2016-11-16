@@ -54,7 +54,7 @@
 
 
 //class RF24;
-class RF24Network;
+//class RF24Network;
 
 
 class RF24Mesh
