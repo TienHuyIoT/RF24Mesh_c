@@ -11,14 +11,14 @@
 #include "RF24.h"
 #include "RF24Network.h"
 #include "RF24Mesh.h"
-#include <SPI.h>
+
 //#include <printf.h>
 
 
 /**** Configure the nrf24l01 CE and CS pins ****/
-RF24 radio(7, 8);
-RF24Network network(radio);
-RF24Mesh mesh(radio, network);
+RF24 radio;
+RF24Network network;
+RF24Mesh mesh;
 
 /**
    User Configuration: nodeID - A unique identifier for each radio. Allows addressing
@@ -41,33 +41,37 @@ struct payload_t {
 
 void setup() {
 
+  RF24_init(&radio,7, 8);
+  RF24N_init(&network,&radio);
+  RF24M_init(&mesh,&radio,&network); 
+  
   Serial.begin(115200);
   //printf_begin();
   // Set the nodeID manually
-  mesh.setNodeID(nodeID);
+  RF24M_setNodeID(&mesh,nodeID);
   // Connect to the mesh
   Serial.println(F("Connecting to the mesh..."));
-  mesh.begin();
+  RF24M_begin(&mesh);
 }
 
 
 
 void loop() {
 
-  mesh.update();
+  RF24M_update(&mesh);
 
   // Send to the master node every second
   if (millis() - displayTimer >= 1000) {
     displayTimer = millis();
 
     // Send an 'M' type message containing the current millis()
-    if (!mesh.write(&displayTimer, 'M', sizeof(displayTimer))) {
+    if (!RF24M_write(&mesh,&displayTimer, 'M', sizeof(displayTimer))) {
 
       // If a write fails, check connectivity to the mesh network
-      if ( ! mesh.checkConnection() ) {
+      if ( ! RF24M_checkConnection(&mesh) ) {
         //refresh the network address
         Serial.println("Renewing Address");
-        mesh.renewAddress();
+        RF24M_renewAddress(&mesh);
       } else {
         Serial.println("Send fail, Test OK");
       }
@@ -76,10 +80,10 @@ void loop() {
     }
   }
 
-  while (network.available()) {
+  while (RF24N_available(&network)) {
     RF24NetworkHeader header;
     payload_t payload;
-    network.read(header, &payload, sizeof(payload));
+    RF24N_read(&network, &header, &payload, sizeof(payload));
     Serial.print("Received packet #");
     Serial.print(payload.counter);
     Serial.print(" at ");

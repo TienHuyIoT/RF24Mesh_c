@@ -25,9 +25,9 @@
 #include <RF24/RF24.h>
 #include <RF24Network/RF24Network.h>
 
-RF24 radio(RPI_V2_GPIO_P1_15, BCM2835_SPI_CS0, BCM2835_SPI_SPEED_8MHZ);  
-RF24Network network(radio);
-RF24Mesh mesh(radio,network);
+RF24 radio;  
+RF24Network network;
+RF24Mesh mesh;
 
 void printNodes(uint8_t boldID);
 void pingNode(uint8_t listNo);
@@ -38,11 +38,14 @@ uint16_t failID = 0;
 
 int main()
 {	
+RF24_init2(&radio,RPI_V2_GPIO_P1_15, BCM2835_SPI_CS0, BCM2835_SPI_SPEED_8MHZ);  
+RF24N_init(&network,&radio);
+RF24M_init(&mesh,&radio,&network);
 
     printf("Establishing mesh...\n");
-	mesh.setNodeID(0);
-    mesh.begin();
-	radio.printDetails();
+	RF24M_setNodeID(&mesh,0);
+        RF24M_begin(&mesh);
+	RF24_printDetails(&radio);
 
 	initscr();			/* Start curses mode 		  */
 	start_color();
@@ -63,17 +66,17 @@ while(1)
 {
 
     // Call mesh.update to keep the network updated
-    mesh.update();
+    RF24M_update(&mesh);
     // In addition, keep the 'DHCP service' running on the master node so addresses will
     // be assigned to the sensor nodes
-	mesh.DHCP();
+	RF24M_DHCP(&mesh);
     // Wait until a sensor node is connected
 	if(sizeof(mesh.addrList) < 1){continue; }
 	
 	// Check for incoming data from the sensors
-    while(network.available()){    
+    while(RF24N_available(&network)){    
 		RF24NetworkHeader header;
-		network.peek(header);
+		RF24N_peek(&network,&header);
 	
 		uint8_t boldID = 0;
 		
@@ -87,7 +90,7 @@ while(1)
 		attroff(A_BOLD | COLOR_PAIR(1));	
 		
 		// Read the network payload
-		network.read(header,0,0);
+		RF24N_read(&network,&header,0,0);
 		
 		// Display the header info
 		mvprintw(3,0," HeaderID: %u  \n Type: %d  \n From: 0%o  \n ",header.id,header.type,header.from_node);
@@ -172,11 +175,12 @@ void pingNode(uint8_t listNo){
    mvprintw(11,0,"[Ping Test]\n");
    attroff(A_BOLD | COLOR_PAIR(1));
 
-    RF24NetworkHeader headers(mesh.addrList[listNo].address,NETWORK_PING);
+    RF24NetworkHeader headers;
+    RF24NH_init(&headers,mesh.addrList[listNo].address,NETWORK_PING);
 	uint32_t pingtime=millis();
 	bool ok;
 	if(headers.to_node){
-		ok = network.write(headers,0,0);
+		ok = RF24N_write_m(&network,&headers,0,0);
 		if(ok && failID == mesh.addrList[listNo].nodeID){ failID = 0; }
 		if(!ok){ failID = mesh.addrList[listNo].nodeID; }
 	}

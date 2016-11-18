@@ -16,25 +16,29 @@
 #include "RF24Network.h"
 #include "RF24.h"
 #include "RF24Mesh.h"
-#include <SPI.h>
+
 //Include eeprom.h for AVR (Uno, Nano) etc. except ATTiny
 #include <EEPROM.h>
 
 /***** Configure the chosen CE,CS pins *****/
-RF24 radio(7,8);
-RF24Network network(radio);
-RF24Mesh mesh(radio,network);
+RF24 radio;
+RF24Network network;
+RF24Mesh mesh;
 
 uint32_t displayTimer = 0;
 
 void setup() {
+RF24_init(&radio,7,8);
+RF24N_init(&network,&radio);
+RF24M_init(&mesh,&radio,&network);
+  
   Serial.begin(115200);
 
   // Set the nodeID to 0 for the master node
-  mesh.setNodeID(0);
-  Serial.println(mesh.getNodeID());
+  RF24M_setNodeID(&mesh,0);
+  Serial.println(RF24M_getNodeID(&mesh));
   // Connect to the mesh
-  mesh.begin();
+  RF24M_begin(&mesh);
 
 }
 
@@ -42,23 +46,23 @@ void setup() {
 void loop() {    
 
   // Call mesh.update to keep the network updated
-  mesh.update();
+  RF24M_update(&mesh);
   
   // In addition, keep the 'DHCP service' running on the master node so addresses will
   // be assigned to the sensor nodes
-  mesh.DHCP();
+  RF24M_DHCP(&mesh);
   
   
   // Check for incoming data from the sensors
-  if(network.available()){
+  if(RF24N_available(&network)){
     RF24NetworkHeader header;
-    network.peek(header);
+    RF24N_peek(&network,&header);
     
     uint32_t dat=0;
     switch(header.type){
       // Display the incoming millis() values from the sensor nodes
-      case 'M': network.read(header,&dat,sizeof(dat)); Serial.println(dat); break;
-      default: network.read(header,0,0); Serial.println(header.type);break;
+      case 'M': RF24N_read(&network,&header,&dat,sizeof(dat)); Serial.println(dat); break;
+      default: RF24N_read(&network,&header,0,0); Serial.println(header.type);break;
     }
   }
   
