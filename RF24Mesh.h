@@ -7,6 +7,10 @@
 #ifndef __RF24MESH_H__
 #define __RF24MESH_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -148,8 +152,8 @@ typedef struct
    * @param data_rate The data rate (RF24_250KBPS,RF24_1MBPS,RF24_2MBPS) default:RF24_1MBPS
    * @param timeout How long to attempt address renewal in milliseconds default:60000
    */
-  bool RF24M_begin(RF24Mesh* mesh, uint8_t channel = MESH_DEFAULT_CHANNEL, rf24_datarate_e data_rate = RF24_1MBPS, uint32_t timeout=MESH_RENEWAL_TIMEOUT );
-  
+  //bool RF24M_begin(RF24Mesh* mesh, uint8_t channel = MESH_DEFAULT_CHANNEL, rf24_datarate_e data_rate = RF24_1MBPS, uint32_t timeout=MESH_RENEWAL_TIMEOUT );
+  bool RF24M_begin(RF24Mesh* mesh, uint8_t channel, rf24_datarate_e data_rate, uint32_t timeout );
   /**
    * Very similar to network.update(), it needs to be called regularly to keep the network
    * and the mesh going.
@@ -170,7 +174,8 @@ typedef struct
    * @param nodeID **Optional**: The nodeID of the recipient if not sending to master
    * @return True if success, False if failed
    */
-  bool RF24M_write(RF24Mesh* mesh, const void* data, uint8_t msg_type, size_t size, uint8_t nodeID=0);
+  //bool RF24M_write(RF24Mesh* mesh, const void* data, uint8_t msg_type, size_t size, uint8_t nodeID=0);
+  bool RF24M_write(RF24Mesh* mesh, const void* data, uint8_t msg_type, size_t size, uint8_t nodeID);
   
   /**
    * Set a unique nodeID for this node. This value is stored in program memory, so is saved after loss of power.  
@@ -200,7 +205,8 @@ typedef struct
    * @param address If no address is provided, returns the local nodeID, otherwise a lookup request is sent to the master node
    * @return Returns the unique identifier (1-255) or -1 if not found.
    */
-  int16_t RF24M_getNodeID(RF24Mesh* mesh, uint16_t address=MESH_BLANK_ID);
+  //int16_t RF24M_getNodeID(RF24Mesh* mesh, uint16_t address=MESH_BLANK_ID);
+  int16_t RF24M_getNodeID(RF24Mesh* mesh, uint16_t address);
   
   /**
    * Tests connectivity of this node to the mesh.
@@ -221,7 +227,8 @@ typedef struct
   
   * @return Returns the newly assigned RF24Network address
   */
-  uint16_t RF24M_renewAddress(RF24Mesh* mesh, uint32_t timeout=MESH_RENEWAL_TIMEOUT);
+  //uint16_t RF24M_renewAddress(RF24Mesh* mesh, uint32_t timeout=MESH_RENEWAL_TIMEOUT);
+  uint16_t RF24M_renewAddress(RF24Mesh* mesh, uint32_t timeout);
   
   /**
    * Releases the currently assigned address lease. Useful for nodes that will be sleeping etc.
@@ -244,7 +251,7 @@ typedef struct
    * Write to a specific node by RF24Network address.
    *
    */
-  bool RF24M_write(RF24Mesh* mesh, uint16_t to_node, const void* data, uint8_t msg_type, size_t size );
+  bool RF24M_write_n(RF24Mesh* mesh, uint16_t to_node, const void* data, uint8_t msg_type, size_t size );
   
   /**
   * Change the active radio channel after the mesh has been started.
@@ -285,6 +292,9 @@ typedef struct
   bool RF24M_waitForAvailable(RF24Mesh* mesh, uint32_t timeout); /**< Waits for data to become available */
 
 
+#ifdef __cplusplus
+ }
+#endif
 
  #endif
  

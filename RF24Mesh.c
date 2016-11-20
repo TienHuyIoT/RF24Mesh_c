@@ -5,7 +5,7 @@
 #include "RF24Mesh.h"
 #include "RF24Mesh_config.h"
 #if defined (__linux) && !defined(__ARDUINO_X86__)
-#include <fstream>
+//#include <fstream>
 #endif
 
 void RF24M_init(RF24Mesh* mesh,  RF24* _radio,RF24Network* _network )
@@ -25,7 +25,7 @@ bool RF24M_begin(RF24Mesh* mesh, uint8_t channel, rf24_datarate_e data_rate, uin
   RF24_setDataRate(mesh->radio,data_rate);  
   mesh->network->returnSysMsgs = 1;
   
-  if(RF24M_getNodeID(mesh)){ //Not master node
+  if(RF24M_getNodeID(mesh,MESH_BLANK_ID)){ //Not master node
     mesh->mesh_address = MESH_DEFAULT_ADDRESS;
     if(!RF24M_renewAddress(mesh,timeout)){
       return 0;
@@ -57,7 +57,7 @@ uint8_t RF24M_update(RF24Mesh* mesh){
 	  mesh->doDHCP = 1;
 	}
 
-  if(!RF24M_getNodeID(mesh)){
+  if(!RF24M_getNodeID(mesh,MESH_BLANK_ID)){
 	if( (type == MESH_ADDR_LOOKUP || type == MESH_ID_LOOKUP)) {
 	  RF24NetworkHeader * header = (RF24NetworkHeader*)mesh->network->frame_buffer;
 	  header->to_node = header->from_node;
@@ -73,8 +73,9 @@ uint8_t RF24M_update(RF24Mesh* mesh){
 	  //RF24N_write(&network,header,&returnAddr,sizeof(returnAddr));	
 	}else
 	if(type == MESH_ADDR_RELEASE ){
+                uint8_t i;
 		uint16_t *fromAddr = (uint16_t*)mesh->network->frame_buffer;
-		for(uint8_t i=0; i< mesh->addrListTop; i++){
+		for(i=0; i< mesh->addrListTop; i++){
 			if(mesh->addrList[i].address == *fromAddr){
 				mesh->addrList[i].address = 0;
 			}
@@ -83,8 +84,8 @@ uint8_t RF24M_update(RF24Mesh* mesh){
     #if !defined (ARDUINO_ARCH_AVR)
     else 
 	if(type == MESH_ADDR_CONFIRM ){
-        RF24NetworkHeader& header = *(RF24NetworkHeader*)mesh->network->frame_buffer;
-        if(header.from_node == mesh->lastAddress){
+        RF24NetworkHeader * header = (RF24NetworkHeader*)mesh->network->frame_buffer;
+        if(header->from_node == mesh->lastAddress){
             RF24M_setAddress(mesh,mesh->lastID,mesh->lastAddress);
         }        
     }
@@ -95,7 +96,7 @@ uint8_t RF24M_update(RF24Mesh* mesh){
 	return type;
 }
 
-bool RF24M_write(RF24Mesh* mesh, uint16_t to_node, const void* data, uint8_t msg_type, size_t size ){
+bool RF24M_write_n(RF24Mesh* mesh, uint16_t to_node, const void* data, uint8_t msg_type, size_t size ){
     if(mesh->mesh_address == MESH_DEFAULT_ADDRESS){ return 0; }
 	RF24NetworkHeader header;
 	RF24NH_init(&header,to_node,msg_type);	
@@ -121,7 +122,7 @@ bool RF24M_write(RF24Mesh* mesh, const void* data, uint8_t msg_type, size_t size
         delay(retryDelay);
     }  
   }
-  return RF24M_write(mesh,toNode,data,msg_type,size);
+  return RF24M_write_n(mesh,toNode,data,msg_type,size);
 }
 
 /*****************************************************/
@@ -168,9 +169,10 @@ int16_t RF24M_getAddress(RF24Mesh* mesh, uint8_t nodeID){
 
 //#if defined (ARDUINO_SAM_DUE) || defined (__linux)
 #if !defined RF24_TINY && !defined(MESH_NOMASTER)
-	if(!RF24M_getNodeID(mesh)){ //Master Node
+	if(!RF24M_getNodeID(mesh,MESH_BLANK_ID)){ //Master Node
 		uint16_t address = 0;
-		for(uint8_t i=0; i< mesh->addrListTop; i++){
+                uint8_t i;
+		for(i=0; i< mesh->addrListTop; i++){
 			if(mesh->addrList[i].nodeID == nodeID){
 				address = mesh->addrList[i].address;
 				return address;
@@ -206,7 +208,8 @@ int16_t RF24M_getNodeID(RF24Mesh* mesh, uint16_t address){
     }    
     
     if(!mesh->mesh_address){ //Master Node
-        for(uint8_t i=0; i< mesh->addrListTop; i++){
+        uint8_t i; 
+        for(i=0; i< mesh->addrListTop; i++){
             if(mesh->addrList[i].address == address){
                 return mesh->addrList[i].nodeID;
             }
@@ -262,8 +265,10 @@ uint16_t RF24M_renewAddress(RF24Mesh* mesh, uint32_t timeout){
   while(!RF24M_requestAddress(mesh,reqCounter)){
     if(millis()-start > timeout){ return 0; }
     delay(50 + ( (totalReqs+1)*(reqCounter+1)) * 2);
-    (++reqCounter) = reqCounter%4;
-    (++totalReqs) = totalReqs%10;
+    reqCounter++;
+    reqCounter = reqCounter%4;
+    totalReqs++;
+    totalReqs = totalReqs%10;
     
   }
   mesh->network->networkFlags &= ~2;
@@ -343,10 +348,11 @@ bool RF24M_requestAddress(RF24Mesh* mesh, uint8_t level){
     #endif	
 
   uint8_t type=0;
-  for(uint8_t i=0; i<pollCount; i++){
+  uint8_t i;
+  for(i=0; i<pollCount; i++){
     // Request an address via the contact node
     header.type = NETWORK_REQ_ADDRESS;
-    header.reserved = RF24M_getNodeID(mesh);
+    header.reserved = RF24M_getNodeID(mesh,MESH_BLANK_ID);
     header.to_node = contactNode[i];    
     
     // Do a direct write (no ack) to the contact node. Include the nodeId and address.	
@@ -382,7 +388,7 @@ bool RF24M_requestAddress(RF24Mesh* mesh, uint8_t level){
 	//memcpy(&addrResponse,network.frame_buffer+sizeof(RF24NetworkHeader),sizeof(addrResponse));
     memcpy(&newAddress,mesh->network->frame_buffer+sizeof(RF24NetworkHeader),sizeof(newAddress));
 
-	if(!newAddress || mesh->network->frame_buffer[7] != RF24M_getNodeID(mesh) ){
+	if(!newAddress || mesh->network->frame_buffer[7] != RF24M_getNodeID(mesh,MESH_BLANK_ID) ){
 		#ifdef MESH_DEBUG_SERIAL
 		  Serial.print(millis()); Serial.print(F(" MSH: Attempt Failed ")); Serial.println(network.frame_buffer[7]);
           Serial.print("My NodeID ");Serial.println(getNodeID());
@@ -453,8 +459,8 @@ void RF24M_setStaticAddress(RF24Mesh* mesh, uint8_t nodeID, uint16_t address){
 void RF24M_setAddress(RF24Mesh* mesh, uint8_t nodeID, uint16_t address){
   
   uint8_t position = mesh->addrListTop;
-  
-  for(uint8_t i=0; i<mesh->addrListTop; i++){
+  uint8_t i; 
+  for(i=0; i<mesh->addrListTop; i++){
       if( mesh->addrList[i].nodeID == nodeID){
           position = i;
           break;
@@ -482,24 +488,25 @@ void RF24M_setAddress(RF24Mesh* mesh, uint8_t nodeID, uint16_t address){
 void RF24M_loadDHCP(RF24Mesh* mesh){
 	
 #if defined (__linux) && !defined(__ARDUINO_X86__)
-	std::ifstream infile ("dhcplist.txt",std::ifstream::binary);
+	FILE * infile;
+        int i;
+        infile=fopen("dhcplist.txt","r");
 	if(!infile){ return; }
 	
         mesh->addrList[mesh->addrListTop].nodeID = 255;
 	mesh->addrList[mesh->addrListTop].address = 01114;	
 	
-	infile.seekg(0,infile.end);
-	int length = infile.tellg();
-	infile.seekg(0,infile.beg);
+	fseek(infile,0,SEEK_END);
+	int length = ftell(infile);
+	fseek(infile,0,SEEK_SET);
 
 	mesh->addrList = (addrListStruct*)realloc(mesh->addrList,length + sizeof(addrListStruct));
 
 	mesh->addrListTop = length/sizeof(addrListStruct);
-	for(int i=0; i< mesh->addrListTop; i++){
-		infile.read( (char*)&mesh->addrList[i],sizeof(addrListStruct));
-	
+	for(i=0; i< mesh->addrListTop; i++){
+		fread( (char*)&mesh->addrList[i],sizeof(addrListStruct),1,infile);
 	}
-	infile.close();
+	fclose(infile);
 #endif	
 }
 
@@ -507,14 +514,16 @@ void RF24M_loadDHCP(RF24Mesh* mesh){
 
 void RF24M_saveDHCP(RF24Mesh* mesh){
 #if defined (__linux)  && !defined(__ARDUINO_X86__)
-	std::ofstream outfile ("dhcplist.txt",std::ofstream::binary | std::ofstream::trunc);
+	int i;
+        FILE* outfile;
+        outfile=fopen("dhcplist.txt","w");
 
 	//printf("writingToFile %d  0%o size %d\n",addrList[0].nodeID,addrList[0].address,sizeof(addrListStruct));
 	
-	for(int i=0; i< mesh->addrListTop; i++){
-		outfile.write( (char*)&mesh->addrList[i],sizeof(addrListStruct));
+	for(i=0; i< mesh->addrListTop; i++){
+		fwrite( (char*)&mesh->addrList[i],sizeof(addrListStruct),1,outfile);
     }
-	outfile.close();
+	fclose(outfile);
 	
 	/*addrListStruct aList;
 	std::ifstream infile ("dhcplist.txt",std::ifstream::binary);
@@ -559,12 +568,12 @@ void RF24M_DHCP(RF24Mesh* mesh){
     uint16_t fwd_by = 0;
     uint8_t shiftVal = 0;
     bool extraChild = 0;
+    uint8_t i; 
      
     if( header.from_node != MESH_DEFAULT_ADDRESS){
       fwd_by = header.from_node;
       uint16_t m = fwd_by;
       uint8_t count = 0;
-       
       while(m){  //Octal addresses convert nicely to binary in threes. Address 03 = B011  Address 033 = B011011
         m >>= 3; //Find out how many digits are in the octal address
         count++; 
@@ -579,13 +588,13 @@ void RF24M_DHCP(RF24Mesh* mesh){
     //  printf("%u MSH: Rcv addr req from_id %d \n",millis(),from_id);
     #endif
        
-    for(int i=MESH_MAX_CHILDREN+extraChild; i> 0; i--){ // For each of the possible addresses (5 max)
+    for(i=MESH_MAX_CHILDREN+extraChild; i> 0; i--){ // For each of the possible addresses (5 max)
          
       bool found = 0;
       newAddress = fwd_by | (i << shiftVal);
       if(!newAddress ){ /*printf("dumped 0%o\n",newAddress);*/ continue; }
 
-      for(uint8_t i=0; i < mesh->addrListTop; i++){
+      for(i=0; i < mesh->addrListTop; i++){
       #if defined (MESH_DEBUG_MINIMAL)
         #if !defined (__linux) && !defined ARDUINO_SAM_DUE || defined TEENSY || defined(__ARDUINO_X86__)
           Serial.print("ID: ");Serial.print(addrList[i].nodeID,DEC);Serial.print(" ADDR: ");			

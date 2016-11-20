@@ -36,7 +36,8 @@ endif
 
 ifeq "$(RPI)" "1"
 # The recommended compiler flags for the Raspberry Pi
-CCFLAGS=-Ofast -mfpu=vfp -mfloat-abi=hard -march=$(ARCH) -mtune=arm1176jzf-s -std=c++0x
+#CCFLAGS=-Ofast -mfpu=vfp -mfloat-abi=hard -march=$(ARCH) -mtune=arm1176jzf-s -std=c++0x
+CCFLAGS=-Ofast -mfpu=vfp -mfloat-abi=hard -march=$(ARCH) -mtune=arm1176jzf-s 
 endif
 
 # make all
@@ -45,11 +46,11 @@ all: librf24mesh
 
 # Make the library
 librf24mesh: RF24Mesh.o
-	g++ -shared -Wl,-soname,$@.so.1 ${CCFLAGS} -o ${LIBNAME_RFN} $^ 
+	gcc -shared -Wl,-soname,$@.so.1 ${CCFLAGS} -o ${LIBNAME_RFN} $^ 
 
 # Library parts
-RF24Mesh.o: RF24Mesh.cpp
-	g++ -Wall -fPIC ${CCFLAGS} -c $^
+RF24Mesh.o: RF24Mesh.c
+	gcc -Wall -fPIC ${CCFLAGS} -c $^
 
 # clear build files
 clean:
