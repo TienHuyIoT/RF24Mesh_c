@@ -11,9 +11,9 @@
   *
   */
   
-#include "RF24Mesh/RF24Mesh.h"  
-#include <RF24/RF24.h>
-#include <RF24Network/RF24Network.h>
+#include "RF24Mesh_c/RF24Mesh_c.h"  
+#include <RF24_c/RF24_c.h>
+#include <RF24Network_c/RF24Network_c.h>
 
 
 RF24 radio;  
@@ -30,8 +30,8 @@ RF24M_init(&mesh,&radio,&network);
   // Set the nodeID to 0 for the master node
   RF24M_setNodeID(&mesh,4);
   // Connect to the mesh
-  printf("start nodeID %d\n",RF24M_getNodeID(&mesh));
-  RF24M_begin(&mesh);
+  printf("start nodeID %d\n",RF24M_getNodeID(&mesh,MESH_BLANK_ID));
+  RF24M_begin(&mesh, MESH_DEFAULT_CHANNEL, RF24_1MBPS, MESH_RENEWAL_TIMEOUT );
   RF24_printDetails(&radio);
 
 while(1)
@@ -44,13 +44,13 @@ while(1)
   if(millis() - displayTimer >= 1000){
     displayTimer = millis();
     
-    if(!RF24M_write(&mesh,&displayTimer,'M',sizeof(displayTimer))){
+    if(!RF24M_write(&mesh,&displayTimer,'M',sizeof(displayTimer),0)){
        
       // If a write fails, check connectivity to the mesh network
       if( ! RF24M_checkConnection(&mesh) ){
         // The address could be refreshed per a specified timeframe or only when sequential writes fail, etc.
 		printf("Renewing Address\n");
-        RF24M_renewAddress(&mesh); 
+        RF24M_renewAddress(&mesh,MESH_RENEWAL_TIMEOUT); 
 	  }else{
         printf("Send fail, Test OK\n"); 
       }

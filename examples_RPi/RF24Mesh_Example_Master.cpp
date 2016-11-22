@@ -13,9 +13,9 @@
   *
   */
   
-#include "RF24Mesh/RF24Mesh.h"  
-#include <RF24/RF24.h>
-#include <RF24Network/RF24Network.h>
+#include "RF24Mesh_c/RF24Mesh_c.h"  
+#include <RF24_c/RF24_c.h>
+#include <RF24Network_c/RF24Network_c.h>
 
 
 RF24 radio;  
@@ -34,7 +34,7 @@ RF24M_init(&mesh,&radio,&network);
   RF24M_setNodeID(&mesh,0);
   // Connect to the mesh
   printf("start\n");
-  RF24M_begin(&mesh);
+  RF24M_begin(&mesh, MESH_DEFAULT_CHANNEL, RF24_1MBPS, MESH_RENEWAL_TIMEOUT );
   RF24_printDetails(&radio);
 
 while(1)

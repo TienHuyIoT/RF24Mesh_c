@@ -36,7 +36,7 @@ SOURCES = ${PROGRAMS:=.cpp}
 all: ${PROGRAMS}
 
 ${PROGRAMS}: ${SOURCES}
-	g++ ${CCFLAGS} -Wall -I../ -lrf24-bcm -lrf24network -lrf24mesh $@.cpp -o $@
+	g++ ${CCFLAGS} -Wall -I../ -lrf24-bcm -lrf24network_c -lrf24mesh_c $@.cpp -o $@
 
 clean:
 	rm -rf $(PROGRAMS)
