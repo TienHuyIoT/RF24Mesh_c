@@ -11,8 +11,7 @@
 #include "RF24_c.h"
 #include "RF24Network_c.h"
 #include "RF24Mesh_c.h"
-
-//#include <printf.h>
+#include "serial.h"
 
 
 /**** Configure the nrf24l01 CE and CS pins ****/
@@ -34,24 +33,24 @@ RF24Mesh mesh;
 
 uint32_t displayTimer = 0;
 
-struct payload_t {
+typedef struct{
   uint32_t ms;
   uint32_t counter;
-};
+}payload_t;
 
 void setup() {
 
-  RF24_init(&radio,7, 8);
+  RF24_init(&radio,36,35);
   RF24N_init(&network,&radio);
   RF24M_init(&mesh,&radio,&network); 
   
-  Serial.begin(115200);
+  Serial_begin(115200);
   //printf_begin();
   // Set the nodeID manually
-  RF24M_setNodeID(&mesh,nodeID);
+  RF24M_setNodeID(&mesh,nodeID);    
   // Connect to the mesh
-  Serial.println(F("Connecting to the mesh..."));
-  RF24M_begin(&mesh,MESH_DEFAULT_CHANNEL,RF24_1MBPS,MESH_RENEWAL_TIMEOUT );
+  Serial_println(F("Connecting to the mesh..."));
+  RF24M_begin(&mesh,MESH_DEFAULT_CHANNEL, RF24_1MBPS, MESH_RENEWAL_TIMEOUT );
 
 }
 
@@ -71,13 +70,13 @@ void loop() {
       // If a write fails, check connectivity to the mesh network
       if ( ! RF24M_checkConnection(&mesh) ) {
         //refresh the network address
-        Serial.println("Renewing Address");
+        Serial_println("Renewing Address");
         RF24M_renewAddress(&mesh,MESH_RENEWAL_TIMEOUT);
       } else {
-        Serial.println("Send fail, Test OK");
+        Serial_println("Send fail, Test OK");
       }
     } else {
-      Serial.print("Send OK: "); Serial.println(displayTimer);
+      Serial_print("Send OK: "); Serial_println(itoa_(displayTimer));
     }
   }
 
@@ -85,10 +84,10 @@ void loop() {
     RF24NetworkHeader header;
     payload_t payload;
     RF24N_read(&network, &header, &payload, sizeof(payload));
-    Serial.print("Received packet #");
-    Serial.print(payload.counter);
-    Serial.print(" at ");
-    Serial.println(payload.ms);
+    Serial_print("Received packet #");
+    Serial_print(itoa_(payload.counter));
+    Serial_print(" at ");
+    Serial_println(itoa_(payload.ms));
   }
 }
 

@@ -21,9 +21,9 @@
 */
 
 #include <ncurses.h>
-#include "RF24Mesh/RF24Mesh.h"  
-#include <RF24/RF24.h>
-#include <RF24Network/RF24Network.h>
+#include "RF24Mesh_c/RF24Mesh_c.h"  
+#include <RF24_c/RF24_c.h>
+#include <RF24Network_c/RF24Network_c.h>
 
 RF24 radio;  
 RF24Network network;
@@ -44,7 +44,7 @@ RF24M_init(&mesh,&radio,&network);
 
     printf("Establishing mesh...\n");
 	RF24M_setNodeID(&mesh,0);
-        RF24M_begin(&mesh);
+        RF24M_begin(&mesh,MESH_DEFAULT_CHANNEL,RF24_1MBPS,MESH_RENEWAL_TIMEOUT );
 	RF24_printDetails(&radio);
 
 	initscr();			/* Start curses mode 		  */
@@ -178,7 +178,7 @@ void pingNode(uint8_t listNo){
     RF24NetworkHeader headers;
     RF24NH_init(&headers,mesh.addrList[listNo].address,NETWORK_PING);
 	uint32_t pingtime=millis();
-	bool ok;
+	bool ok=0;
 	if(headers.to_node){
 		ok = RF24N_write_m(&network,&headers,0,0);
 		if(ok && failID == mesh.addrList[listNo].nodeID){ failID = 0; }

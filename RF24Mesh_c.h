@@ -133,7 +133,7 @@ typedef struct
   RF24* radio;
   RF24Network* network;  
     
-  bool doDHCP; /**< Indicator that an address request is available */  
+  uint8_t doDHCP; /**< Indicator that an address request is available */  
   uint32_t lastSaveTime;
   uint32_t lastFileSave;
   uint8_t radio_channel;
@@ -168,8 +168,8 @@ typedef struct
    * @param data_rate The data rate (RF24_250KBPS,RF24_1MBPS,RF24_2MBPS) default:RF24_1MBPS
    * @param timeout How long to attempt address renewal in milliseconds default:60000
    */
-  //bool RF24M_begin(RF24Mesh* mesh, uint8_t channel = MESH_DEFAULT_CHANNEL, rf24_datarate_e data_rate = RF24_1MBPS, uint32_t timeout=MESH_RENEWAL_TIMEOUT );
-  bool RF24M_begin(RF24Mesh* mesh, uint8_t channel, rf24_datarate_e data_rate, uint32_t timeout );
+  //uint8_t RF24M_begin(RF24Mesh* mesh, uint8_t channel = MESH_DEFAULT_CHANNEL, rf24_datarate_e data_rate = RF24_1MBPS, uint32_t timeout=MESH_RENEWAL_TIMEOUT );
+  uint8_t RF24M_begin(RF24Mesh* mesh, uint8_t channel, rf24_datarate_e data_rate, uint32_t timeout );
   /**
    * Very similar to network.update(), it needs to be called regularly to keep the network
    * and the mesh going.
@@ -190,8 +190,8 @@ typedef struct
    * @param nodeID **Optional**: The nodeID of the recipient if not sending to master
    * @return True if success, False if failed
    */
-  //bool RF24M_write(RF24Mesh* mesh, const void* data, uint8_t msg_type, size_t size, uint8_t nodeID=0);
-  bool RF24M_write(RF24Mesh* mesh, const void* data, uint8_t msg_type, size_t size, uint8_t nodeID);
+  //uint8_t RF24M_write(RF24Mesh* mesh, const void* data, uint8_t msg_type, size_t size, uint8_t nodeID=0);
+  uint8_t RF24M_write(RF24Mesh* mesh, const void* data, uint8_t msg_type, size_t size, uint8_t nodeID);
   
   /**
    * Set a unique nodeID for this node. This value is stored in program memory, so is saved after loss of power.  
@@ -230,7 +230,7 @@ typedef struct
    * @return Return 1 if connected, 0 if mesh not responding after up to 1 second
    */
   
-  bool RF24M_checkConnection(RF24Mesh* mesh);
+  uint8_t RF24M_checkConnection(RF24Mesh* mesh);
   
   /**
   * Reconnect to the mesh and renew the current RF24Network address. Used to re-establish a connection to the mesh if physical location etc. has changed, or
@@ -251,7 +251,7 @@ typedef struct
    * @note Nodes should ensure that addresses are releases successfully prior to renewal.
    * @return Returns 1 if successfully released, 0 if not
    */
-  bool RF24M_releaseAddress(RF24Mesh* mesh);
+  uint8_t RF24M_releaseAddress(RF24Mesh* mesh);
   
   /**
    * Convert a nodeID into an RF24Network address
@@ -267,7 +267,7 @@ typedef struct
    * Write to a specific node by RF24Network address.
    *
    */
-  bool RF24M_write_n(RF24Mesh* mesh, uint16_t to_node, const void* data, uint8_t msg_type, size_t size );
+  uint8_t RF24M_write_n(RF24Mesh* mesh, uint16_t to_node, const void* data, uint8_t msg_type, size_t size );
   
   /**
   * Change the active radio channel after the mesh has been started.
@@ -278,7 +278,7 @@ typedef struct
   * Allow child nodes to discover and attach to this node.
   * @param allow True to allow children, False to prevent children from attaching automatically.
   */
-  void RF24M_setChild(RF24Mesh* mesh, bool allow);
+  void RF24M_setChild(RF24Mesh* mesh, uint8_t allow);
   
   /**
   * Set/change a nodeID/RF24Network Address pair manually on the master node.
@@ -303,9 +303,9 @@ typedef struct
    */
   void RF24M_setStaticAddress(RF24Mesh* mesh, uint8_t nodeID, uint16_t address);
   
-  bool RF24M_findNodes(RF24Mesh* mesh, RF24NetworkHeader* header, uint8_t level, uint16_t *address); /**< Broadcasts to all multicast levels to find available nodes **/
-  bool RF24M_requestAddress(RF24Mesh* mesh, uint8_t level); /**< Actual requesting of the address once a contact node is discovered or supplied **/
-  bool RF24M_waitForAvailable(RF24Mesh* mesh, uint32_t timeout); /**< Waits for data to become available */
+  uint8_t RF24M_findNodes(RF24Mesh* mesh, RF24NetworkHeader* header, uint8_t level, uint16_t *address); /**< Broadcasts to all multicast levels to find available nodes **/
+  uint8_t RF24M_requestAddress(RF24Mesh* mesh, uint8_t level); /**< Actual requesting of the address once a contact node is discovered or supplied **/
+  uint8_t RF24M_waitForAvailable(RF24Mesh* mesh, uint32_t timeout); /**< Waits for data to become available */
 
 
 #ifdef __cplusplus
