@@ -51,17 +51,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=RF24Mesh_Example.c pic_main.c serial.c ../../RF24Mesh_c.c ../../../RF24Network_c/RF24Network_c.c ../../../RF24_c/RF24_c.c ../../../RF24_c/utility/XC8/spi.c umalloc.c
+SOURCEFILES_QUOTED_IF_SPACED=RF24Mesh_Example.c pic_main.c serial.c ../../../RF24_c/utility/XC8/spi.c umalloc.c ../../../RF24_c/RF24_cg.c ../../RF24Mesh_cg.c ../../../RF24Network_c/RF24Network_cg.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/RF24Mesh_Example.o ${OBJECTDIR}/pic_main.o ${OBJECTDIR}/serial.o ${OBJECTDIR}/_ext/43898991/RF24Mesh_c.o ${OBJECTDIR}/_ext/1478480717/RF24Network_c.o ${OBJECTDIR}/_ext/381377385/RF24_c.o ${OBJECTDIR}/_ext/2031907356/spi.o ${OBJECTDIR}/umalloc.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/RF24Mesh_Example.o.d ${OBJECTDIR}/pic_main.o.d ${OBJECTDIR}/serial.o.d ${OBJECTDIR}/_ext/43898991/RF24Mesh_c.o.d ${OBJECTDIR}/_ext/1478480717/RF24Network_c.o.d ${OBJECTDIR}/_ext/381377385/RF24_c.o.d ${OBJECTDIR}/_ext/2031907356/spi.o.d ${OBJECTDIR}/umalloc.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/RF24Mesh_Example.o ${OBJECTDIR}/pic_main.o ${OBJECTDIR}/serial.o ${OBJECTDIR}/_ext/2031907356/spi.o ${OBJECTDIR}/umalloc.o ${OBJECTDIR}/_ext/381377385/RF24_cg.o ${OBJECTDIR}/_ext/43898991/RF24Mesh_cg.o ${OBJECTDIR}/_ext/1478480717/RF24Network_cg.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/RF24Mesh_Example.o.d ${OBJECTDIR}/pic_main.o.d ${OBJECTDIR}/serial.o.d ${OBJECTDIR}/_ext/2031907356/spi.o.d ${OBJECTDIR}/umalloc.o.d ${OBJECTDIR}/_ext/381377385/RF24_cg.o.d ${OBJECTDIR}/_ext/43898991/RF24Mesh_cg.o.d ${OBJECTDIR}/_ext/1478480717/RF24Network_cg.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/RF24Mesh_Example.o ${OBJECTDIR}/pic_main.o ${OBJECTDIR}/serial.o ${OBJECTDIR}/_ext/43898991/RF24Mesh_c.o ${OBJECTDIR}/_ext/1478480717/RF24Network_c.o ${OBJECTDIR}/_ext/381377385/RF24_c.o ${OBJECTDIR}/_ext/2031907356/spi.o ${OBJECTDIR}/umalloc.o
+OBJECTFILES=${OBJECTDIR}/RF24Mesh_Example.o ${OBJECTDIR}/pic_main.o ${OBJECTDIR}/serial.o ${OBJECTDIR}/_ext/2031907356/spi.o ${OBJECTDIR}/umalloc.o ${OBJECTDIR}/_ext/381377385/RF24_cg.o ${OBJECTDIR}/_ext/43898991/RF24Mesh_cg.o ${OBJECTDIR}/_ext/1478480717/RF24Network_cg.o
 
 # Source Files
-SOURCEFILES=RF24Mesh_Example.c pic_main.c serial.c ../../RF24Mesh_c.c ../../../RF24Network_c/RF24Network_c.c ../../../RF24_c/RF24_c.c ../../../RF24_c/utility/XC8/spi.c umalloc.c
+SOURCEFILES=RF24Mesh_Example.c pic_main.c serial.c ../../../RF24_c/utility/XC8/spi.c umalloc.c ../../../RF24_c/RF24_cg.c ../../RF24Mesh_cg.c ../../../RF24Network_c/RF24Network_cg.c
 
 
 CFLAGS=
@@ -101,21 +101,6 @@ ${OBJECTDIR}/serial.o: serial.c  nbproject/Makefile-${CND_CONF}.mk
 	${RM} ${OBJECTDIR}/serial.o 
 	${MP_CC} --use-non-free -I"../../" -I"../../../RF24Network_c" -I"../../../RF24_c" -I"../../../RF24_c/utility/XC8" --opt-code-size --pstack-model=large  -Wl,-s,18f4620_g.lkr   -c -mpic16 -p18f4620 serial.c  -o${OBJECTDIR}/serial.o
 	
-${OBJECTDIR}/_ext/43898991/RF24Mesh_c.o: ../../RF24Mesh_c.c  nbproject/Makefile-${CND_CONF}.mk
-	${MKDIR} ${OBJECTDIR}/_ext/43898991 
-	${RM} ${OBJECTDIR}/_ext/43898991/RF24Mesh_c.o 
-	${MP_CC} --use-non-free -I"../../" -I"../../../RF24Network_c" -I"../../../RF24_c" -I"../../../RF24_c/utility/XC8" --opt-code-size --pstack-model=large  -Wl,-s,18f4620_g.lkr   -c -mpic16 -p18f4620 ../../RF24Mesh_c.c  -o${OBJECTDIR}/_ext/43898991/RF24Mesh_c.o
-	
-${OBJECTDIR}/_ext/1478480717/RF24Network_c.o: ../../../RF24Network_c/RF24Network_c.c  nbproject/Makefile-${CND_CONF}.mk
-	${MKDIR} ${OBJECTDIR}/_ext/1478480717 
-	${RM} ${OBJECTDIR}/_ext/1478480717/RF24Network_c.o 
-	${MP_CC} --use-non-free -I"../../" -I"../../../RF24Network_c" -I"../../../RF24_c" -I"../../../RF24_c/utility/XC8" --opt-code-size --pstack-model=large  -Wl,-s,18f4620_g.lkr   -c -mpic16 -p18f4620 ../../../RF24Network_c/RF24Network_c.c  -o${OBJECTDIR}/_ext/1478480717/RF24Network_c.o
-	
-${OBJECTDIR}/_ext/381377385/RF24_c.o: ../../../RF24_c/RF24_c.c  nbproject/Makefile-${CND_CONF}.mk
-	${MKDIR} ${OBJECTDIR}/_ext/381377385 
-	${RM} ${OBJECTDIR}/_ext/381377385/RF24_c.o 
-	${MP_CC} --use-non-free -I"../../" -I"../../../RF24Network_c" -I"../../../RF24_c" -I"../../../RF24_c/utility/XC8" --opt-code-size --pstack-model=large  -Wl,-s,18f4620_g.lkr   -c -mpic16 -p18f4620 ../../../RF24_c/RF24_c.c  -o${OBJECTDIR}/_ext/381377385/RF24_c.o
-	
 ${OBJECTDIR}/_ext/2031907356/spi.o: ../../../RF24_c/utility/XC8/spi.c  nbproject/Makefile-${CND_CONF}.mk
 	${MKDIR} ${OBJECTDIR}/_ext/2031907356 
 	${RM} ${OBJECTDIR}/_ext/2031907356/spi.o 
@@ -125,6 +110,21 @@ ${OBJECTDIR}/umalloc.o: umalloc.c  nbproject/Makefile-${CND_CONF}.mk
 	${MKDIR} ${OBJECTDIR} 
 	${RM} ${OBJECTDIR}/umalloc.o 
 	${MP_CC} --use-non-free -I"../../" -I"../../../RF24Network_c" -I"../../../RF24_c" -I"../../../RF24_c/utility/XC8" --opt-code-size --pstack-model=large  -Wl,-s,18f4620_g.lkr   -c -mpic16 -p18f4620 umalloc.c  -o${OBJECTDIR}/umalloc.o
+	
+${OBJECTDIR}/_ext/381377385/RF24_cg.o: ../../../RF24_c/RF24_cg.c  nbproject/Makefile-${CND_CONF}.mk
+	${MKDIR} ${OBJECTDIR}/_ext/381377385 
+	${RM} ${OBJECTDIR}/_ext/381377385/RF24_cg.o 
+	${MP_CC} --use-non-free -I"../../" -I"../../../RF24Network_c" -I"../../../RF24_c" -I"../../../RF24_c/utility/XC8" --opt-code-size --pstack-model=large  -Wl,-s,18f4620_g.lkr   -c -mpic16 -p18f4620 ../../../RF24_c/RF24_cg.c  -o${OBJECTDIR}/_ext/381377385/RF24_cg.o
+	
+${OBJECTDIR}/_ext/43898991/RF24Mesh_cg.o: ../../RF24Mesh_cg.c  nbproject/Makefile-${CND_CONF}.mk
+	${MKDIR} ${OBJECTDIR}/_ext/43898991 
+	${RM} ${OBJECTDIR}/_ext/43898991/RF24Mesh_cg.o 
+	${MP_CC} --use-non-free -I"../../" -I"../../../RF24Network_c" -I"../../../RF24_c" -I"../../../RF24_c/utility/XC8" --opt-code-size --pstack-model=large  -Wl,-s,18f4620_g.lkr   -c -mpic16 -p18f4620 ../../RF24Mesh_cg.c  -o${OBJECTDIR}/_ext/43898991/RF24Mesh_cg.o
+	
+${OBJECTDIR}/_ext/1478480717/RF24Network_cg.o: ../../../RF24Network_c/RF24Network_cg.c  nbproject/Makefile-${CND_CONF}.mk
+	${MKDIR} ${OBJECTDIR}/_ext/1478480717 
+	${RM} ${OBJECTDIR}/_ext/1478480717/RF24Network_cg.o 
+	${MP_CC} --use-non-free -I"../../" -I"../../../RF24Network_c" -I"../../../RF24_c" -I"../../../RF24_c/utility/XC8" --opt-code-size --pstack-model=large  -Wl,-s,18f4620_g.lkr   -c -mpic16 -p18f4620 ../../../RF24Network_c/RF24Network_cg.c  -o${OBJECTDIR}/_ext/1478480717/RF24Network_cg.o
 	
 else
 ${OBJECTDIR}/RF24Mesh_Example.o: RF24Mesh_Example.c  nbproject/Makefile-${CND_CONF}.mk
@@ -142,21 +142,6 @@ ${OBJECTDIR}/serial.o: serial.c  nbproject/Makefile-${CND_CONF}.mk
 	${RM} ${OBJECTDIR}/serial.o 
 	${MP_CC} --use-non-free -I"../../" -I"../../../RF24Network_c" -I"../../../RF24_c" -I"../../../RF24_c/utility/XC8" --opt-code-size --pstack-model=large  -Wl,-s,18f4620_g.lkr   -c -mpic16 -p18f4620 serial.c  -o${OBJECTDIR}/serial.o
 	
-${OBJECTDIR}/_ext/43898991/RF24Mesh_c.o: ../../RF24Mesh_c.c  nbproject/Makefile-${CND_CONF}.mk
-	${MKDIR} ${OBJECTDIR}/_ext/43898991 
-	${RM} ${OBJECTDIR}/_ext/43898991/RF24Mesh_c.o 
-	${MP_CC} --use-non-free -I"../../" -I"../../../RF24Network_c" -I"../../../RF24_c" -I"../../../RF24_c/utility/XC8" --opt-code-size --pstack-model=large  -Wl,-s,18f4620_g.lkr   -c -mpic16 -p18f4620 ../../RF24Mesh_c.c  -o${OBJECTDIR}/_ext/43898991/RF24Mesh_c.o
-	
-${OBJECTDIR}/_ext/1478480717/RF24Network_c.o: ../../../RF24Network_c/RF24Network_c.c  nbproject/Makefile-${CND_CONF}.mk
-	${MKDIR} ${OBJECTDIR}/_ext/1478480717 
-	${RM} ${OBJECTDIR}/_ext/1478480717/RF24Network_c.o 
-	${MP_CC} --use-non-free -I"../../" -I"../../../RF24Network_c" -I"../../../RF24_c" -I"../../../RF24_c/utility/XC8" --opt-code-size --pstack-model=large  -Wl,-s,18f4620_g.lkr   -c -mpic16 -p18f4620 ../../../RF24Network_c/RF24Network_c.c  -o${OBJECTDIR}/_ext/1478480717/RF24Network_c.o
-	
-${OBJECTDIR}/_ext/381377385/RF24_c.o: ../../../RF24_c/RF24_c.c  nbproject/Makefile-${CND_CONF}.mk
-	${MKDIR} ${OBJECTDIR}/_ext/381377385 
-	${RM} ${OBJECTDIR}/_ext/381377385/RF24_c.o 
-	${MP_CC} --use-non-free -I"../../" -I"../../../RF24Network_c" -I"../../../RF24_c" -I"../../../RF24_c/utility/XC8" --opt-code-size --pstack-model=large  -Wl,-s,18f4620_g.lkr   -c -mpic16 -p18f4620 ../../../RF24_c/RF24_c.c  -o${OBJECTDIR}/_ext/381377385/RF24_c.o
-	
 ${OBJECTDIR}/_ext/2031907356/spi.o: ../../../RF24_c/utility/XC8/spi.c  nbproject/Makefile-${CND_CONF}.mk
 	${MKDIR} ${OBJECTDIR}/_ext/2031907356 
 	${RM} ${OBJECTDIR}/_ext/2031907356/spi.o 
@@ -166,6 +151,21 @@ ${OBJECTDIR}/umalloc.o: umalloc.c  nbproject/Makefile-${CND_CONF}.mk
 	${MKDIR} ${OBJECTDIR} 
 	${RM} ${OBJECTDIR}/umalloc.o 
 	${MP_CC} --use-non-free -I"../../" -I"../../../RF24Network_c" -I"../../../RF24_c" -I"../../../RF24_c/utility/XC8" --opt-code-size --pstack-model=large  -Wl,-s,18f4620_g.lkr   -c -mpic16 -p18f4620 umalloc.c  -o${OBJECTDIR}/umalloc.o
+	
+${OBJECTDIR}/_ext/381377385/RF24_cg.o: ../../../RF24_c/RF24_cg.c  nbproject/Makefile-${CND_CONF}.mk
+	${MKDIR} ${OBJECTDIR}/_ext/381377385 
+	${RM} ${OBJECTDIR}/_ext/381377385/RF24_cg.o 
+	${MP_CC} --use-non-free -I"../../" -I"../../../RF24Network_c" -I"../../../RF24_c" -I"../../../RF24_c/utility/XC8" --opt-code-size --pstack-model=large  -Wl,-s,18f4620_g.lkr   -c -mpic16 -p18f4620 ../../../RF24_c/RF24_cg.c  -o${OBJECTDIR}/_ext/381377385/RF24_cg.o
+	
+${OBJECTDIR}/_ext/43898991/RF24Mesh_cg.o: ../../RF24Mesh_cg.c  nbproject/Makefile-${CND_CONF}.mk
+	${MKDIR} ${OBJECTDIR}/_ext/43898991 
+	${RM} ${OBJECTDIR}/_ext/43898991/RF24Mesh_cg.o 
+	${MP_CC} --use-non-free -I"../../" -I"../../../RF24Network_c" -I"../../../RF24_c" -I"../../../RF24_c/utility/XC8" --opt-code-size --pstack-model=large  -Wl,-s,18f4620_g.lkr   -c -mpic16 -p18f4620 ../../RF24Mesh_cg.c  -o${OBJECTDIR}/_ext/43898991/RF24Mesh_cg.o
+	
+${OBJECTDIR}/_ext/1478480717/RF24Network_cg.o: ../../../RF24Network_c/RF24Network_cg.c  nbproject/Makefile-${CND_CONF}.mk
+	${MKDIR} ${OBJECTDIR}/_ext/1478480717 
+	${RM} ${OBJECTDIR}/_ext/1478480717/RF24Network_cg.o 
+	${MP_CC} --use-non-free -I"../../" -I"../../../RF24Network_c" -I"../../../RF24_c" -I"../../../RF24_c/utility/XC8" --opt-code-size --pstack-model=large  -Wl,-s,18f4620_g.lkr   -c -mpic16 -p18f4620 ../../../RF24Network_c/RF24Network_cg.c  -o${OBJECTDIR}/_ext/1478480717/RF24Network_cg.o
 	
 endif
 

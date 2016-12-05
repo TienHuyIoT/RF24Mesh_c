@@ -1,0 +1,1218 @@
+gpasm-1.4.0 #1107 (May  9 2015) build/sdcc/pr   12-2-2016  22:31:28         PAGE  1
+
+
+LOC    OBJECT CODE    LINE  SOURCE TEXT
+  VALUE
+
+                      00001 ;--------------------------------------------------------
+                      00002 ; File Created by SDCC : free open source ANSI-C Compiler
+                      00003 ; Version 3.6.0 #9615 (Linux)
+                      00004 ;--------------------------------------------------------
+                      00005 ; PIC16 port for the Microchip 16-bit core micros
+                      00006 ;--------------------------------------------------------
+                      00007         list    p=18f4620
+                      00008         radix   dec
+                      00009 
+                      00010 
+                      00011 ;--------------------------------------------------------
+                      00012 ; public variables in this module
+                      00013 ;--------------------------------------------------------
+  0000                00014         global  _displayTimer
+  0000                00015         global  _setup
+  0000                00016         global  _loop
+                      00017 
+                      00018 ;--------------------------------------------------------
+                      00019 ; extern variables in this module
+                      00020 ;--------------------------------------------------------
+  0000                00021         extern  _PORTAbits
+  0000                00022         extern  _PORTBbits
+  0000                00023         extern  _PORTCbits
+  0000                00024         extern  _PORTDbits
+  0000                00025         extern  _PORTEbits
+  0000                00026         extern  _LATAbits
+  0000                00027         extern  _LATBbits
+  0000                00028         extern  _LATCbits
+  0000                00029         extern  _LATDbits
+  0000                00030         extern  _LATEbits
+  0000                00031         extern  _DDRAbits
+  0000                00032         extern  _TRISAbits
+  0000                00033         extern  _DDRBbits
+  0000                00034         extern  _TRISBbits
+  0000                00035         extern  _DDRCbits
+  0000                00036         extern  _TRISCbits
+  0000                00037         extern  _DDRDbits
+  0000                00038         extern  _TRISDbits
+  0000                00039         extern  _DDREbits
+  0000                00040         extern  _TRISEbits
+  0000                00041         extern  _OSCTUNEbits
+  0000                00042         extern  _PIE1bits
+  0000                00043         extern  _PIR1bits
+  0000                00044         extern  _IPR1bits
+  0000                00045         extern  _PIE2bits
+  0000                00046         extern  _PIR2bits
+  0000                00047         extern  _IPR2bits
+  0000                00048         extern  _EECON1bits
+  0000                00049         extern  _RCSTAbits
+  0000                00050         extern  _TXSTAbits
+  0000                00051         extern  _T3CONbits
+  0000                00052         extern  _CMCONbits
+  0000                00053         extern  _CVRCONbits
+gpasm-1.4.0 #1107 (May  9 2015) build/sdcc/pr   12-2-2016  22:31:28         PAGE  2
+
+
+LOC    OBJECT CODE    LINE  SOURCE TEXT
+  VALUE
+
+  0000                00054         extern  _ECCP1ASbits
+  0000                00055         extern  _PWM1CONbits
+  0000                00056         extern  _BAUDCONbits
+  0000                00057         extern  _BAUDCTLbits
+  0000                00058         extern  _CCP2CONbits
+  0000                00059         extern  _CCP1CONbits
+  0000                00060         extern  _ADCON2bits
+  0000                00061         extern  _ADCON1bits
+  0000                00062         extern  _ADCON0bits
+  0000                00063         extern  _SSPCON2bits
+  0000                00064         extern  _SSPCON1bits
+  0000                00065         extern  _SSPSTATbits
+  0000                00066         extern  _T2CONbits
+  0000                00067         extern  _T1CONbits
+  0000                00068         extern  _RCONbits
+  0000                00069         extern  _WDTCONbits
+  0000                00070         extern  _HLVDCONbits
+  0000                00071         extern  _LVDCONbits
+  0000                00072         extern  _OSCCONbits
+  0000                00073         extern  _T0CONbits
+  0000                00074         extern  _STATUSbits
+  0000                00075         extern  _INTCON3bits
+  0000                00076         extern  _INTCON2bits
+  0000                00077         extern  _INTCONbits
+  0000                00078         extern  _STKPTRbits
+  0000                00079         extern  _stdin
+  0000                00080         extern  _stdout
+  0000                00081         extern  _mtime
+  0000                00082         extern  _PORTA
+  0000                00083         extern  _PORTB
+  0000                00084         extern  _PORTC
+  0000                00085         extern  _PORTD
+  0000                00086         extern  _PORTE
+  0000                00087         extern  _LATA
+  0000                00088         extern  _LATB
+  0000                00089         extern  _LATC
+  0000                00090         extern  _LATD
+  0000                00091         extern  _LATE
+  0000                00092         extern  _DDRA
+  0000                00093         extern  _TRISA
+  0000                00094         extern  _DDRB
+  0000                00095         extern  _TRISB
+  0000                00096         extern  _DDRC
+  0000                00097         extern  _TRISC
+  0000                00098         extern  _DDRD
+  0000                00099         extern  _TRISD
+  0000                00100         extern  _DDRE
+  0000                00101         extern  _TRISE
+  0000                00102         extern  _OSCTUNE
+  0000                00103         extern  _PIE1
+  0000                00104         extern  _PIR1
+  0000                00105         extern  _IPR1
+  0000                00106         extern  _PIE2
+gpasm-1.4.0 #1107 (May  9 2015) build/sdcc/pr   12-2-2016  22:31:28         PAGE  3
+
+
+LOC    OBJECT CODE    LINE  SOURCE TEXT
+  VALUE
+
+  0000                00107         extern  _PIR2
+  0000                00108         extern  _IPR2
+  0000                00109         extern  _EECON1
+  0000                00110         extern  _EECON2
+  0000                00111         extern  _EEDATA
+  0000                00112         extern  _EEADR
+  0000                00113         extern  _EEADRH
+  0000                00114         extern  _RCSTA
+  0000                00115         extern  _TXSTA
+  0000                00116         extern  _TXREG
+  0000                00117         extern  _RCREG
+  0000                00118         extern  _SPBRG
+  0000                00119         extern  _SPBRGH
+  0000                00120         extern  _T3CON
+  0000                00121         extern  _TMR3
+  0000                00122         extern  _TMR3L
+  0000                00123         extern  _TMR3H
+  0000                00124         extern  _CMCON
+  0000                00125         extern  _CVRCON
+  0000                00126         extern  _ECCP1AS
+  0000                00127         extern  _PWM1CON
+  0000                00128         extern  _BAUDCON
+  0000                00129         extern  _BAUDCTL
+  0000                00130         extern  _CCP2CON
+  0000                00131         extern  _CCPR2
+  0000                00132         extern  _CCPR2L
+  0000                00133         extern  _CCPR2H
+  0000                00134         extern  _CCP1CON
+  0000                00135         extern  _CCPR1
+  0000                00136         extern  _CCPR1L
+  0000                00137         extern  _CCPR1H
+  0000                00138         extern  _ADCON2
+  0000                00139         extern  _ADCON1
+  0000                00140         extern  _ADCON0
+  0000                00141         extern  _ADRES
+  0000                00142         extern  _ADRESL
+  0000                00143         extern  _ADRESH
+  0000                00144         extern  _SSPCON2
+  0000                00145         extern  _SSPCON1
+  0000                00146         extern  _SSPSTAT
+  0000                00147         extern  _SSPADD
+  0000                00148         extern  _SSPBUF
+  0000                00149         extern  _T2CON
+  0000                00150         extern  _PR2
+  0000                00151         extern  _TMR2
+  0000                00152         extern  _T1CON
+  0000                00153         extern  _TMR1
+  0000                00154         extern  _TMR1L
+  0000                00155         extern  _TMR1H
+  0000                00156         extern  _RCON
+  0000                00157         extern  _WDTCON
+  0000                00158         extern  _HLVDCON
+  0000                00159         extern  _LVDCON
+gpasm-1.4.0 #1107 (May  9 2015) build/sdcc/pr   12-2-2016  22:31:28         PAGE  4
+
+
+LOC    OBJECT CODE    LINE  SOURCE TEXT
+  VALUE
+
+  0000                00160         extern  _OSCCON
+  0000                00161         extern  _T0CON
+  0000                00162         extern  _TMR0
+  0000                00163         extern  _TMR0L
+  0000                00164         extern  _TMR0H
+  0000                00165         extern  _STATUS
+  0000                00166         extern  _FSR2L
+  0000                00167         extern  _FSR2H
+  0000                00168         extern  _PLUSW2
+  0000                00169         extern  _PREINC2
+  0000                00170         extern  _POSTDEC2
+  0000                00171         extern  _POSTINC2
+  0000                00172         extern  _INDF2
+  0000                00173         extern  _BSR
+  0000                00174         extern  _FSR1L
+  0000                00175         extern  _FSR1H
+  0000                00176         extern  _PLUSW1
+  0000                00177         extern  _PREINC1
+  0000                00178         extern  _POSTDEC1
+  0000                00179         extern  _POSTINC1
+  0000                00180         extern  _INDF1
+  0000                00181         extern  _WREG
+  0000                00182         extern  _FSR0L
+  0000                00183         extern  _FSR0H
+  0000                00184         extern  _PLUSW0
+  0000                00185         extern  _PREINC0
+  0000                00186         extern  _POSTDEC0
+  0000                00187         extern  _POSTINC0
+  0000                00188         extern  _INDF0
+  0000                00189         extern  _INTCON3
+  0000                00190         extern  _INTCON2
+  0000                00191         extern  _INTCON
+  0000                00192         extern  _PROD
+  0000                00193         extern  _PRODL
+  0000                00194         extern  _PRODH
+  0000                00195         extern  _TABLAT
+  0000                00196         extern  _TBLPTR
+  0000                00197         extern  _TBLPTRL
+  0000                00198         extern  _TBLPTRH
+  0000                00199         extern  _TBLPTRU
+  0000                00200         extern  _PC
+  0000                00201         extern  _PCL
+  0000                00202         extern  _PCLATH
+  0000                00203         extern  _PCLATU
+  0000                00204         extern  _STKPTR
+  0000                00205         extern  _TOS
+  0000                00206         extern  _TOSL
+  0000                00207         extern  _TOSH
+  0000                00208         extern  _TOSU
+  0000                00209         extern  _millis
+  0000                00210         extern  _RF24_init
+  0000                00211         extern  _RF24N_init
+  0000                00212         extern  _RF24N_available
+gpasm-1.4.0 #1107 (May  9 2015) build/sdcc/pr   12-2-2016  22:31:28         PAGE  5
+
+
+LOC    OBJECT CODE    LINE  SOURCE TEXT
+  VALUE
+
+  0000                00213         extern  _RF24N_read
+  0000                00214         extern  _RF24M_init
+  0000                00215         extern  _RF24M_begin
+  0000                00216         extern  _RF24M_update
+  0000                00217         extern  _RF24M_write
+  0000                00218         extern  _RF24M_setNodeID
+  0000                00219         extern  _RF24M_checkConnection
+  0000                00220         extern  _RF24M_renewAddress
+  0000                00221         extern  _Serial_begin
+  0000                00222         extern  _Serial_print
+  0000                00223         extern  _Serial_println
+  0000                00224         extern  _itoa_
+                      00225 
+                      00226 ;--------------------------------------------------------
+                      00227 ;       Equates to used internal registers
+                      00228 ;--------------------------------------------------------
+  00000FD8            00229 STATUS  equ     0xfd8
+  00000FE9            00230 FSR0L   equ     0xfe9
+  00000FE1            00231 FSR1L   equ     0xfe1
+  00000FE2            00232 FSR1H   equ     0xfe2
+  00000FD9            00233 FSR2L   equ     0xfd9
+  00000FDA            00234 FSR2H   equ     0xfda
+  00000FE6            00235 POSTINC1        equ     0xfe6
+  00000FE5            00236 POSTDEC1        equ     0xfe5
+  00000FE4            00237 PREINC1 equ     0xfe4
+  00000FF3            00238 PRODL   equ     0xff3
+  00000FF4            00239 PRODH   equ     0xff4
+                      00240 
+                      00241 
+                      00242         idata
+000000 00 00 00 00    00243 _displayTimer   db      0x00, 0x00, 0x00, 0x00
+                      00244 
+                      00245 
+                      00246 ; Internal registers
+                      00247 .registers      udata_ovr       0x0000
+000000                00248 r0x00   res     1
+000001                00249 r0x01   res     1
+000002                00250 r0x02   res     1
+000003                00251 r0x03   res     1
+000004                00252 r0x04   res     1
+000005                00253 r0x05   res     1
+                      00254 
+                      00255 udata_RF24Mesh_Example_0        udata
+000000                00256 _loop_header_2_206      res     8
+                      00257 
+                      00258 udata_RF24Mesh_Example_1        udata
+000000                00259 _loop_payload_2_206     res     8
+                      00260 
+                      00261 ;--------------------------------------------------------
+                      00262 ; global & static initialisations
+                      00263 ;--------------------------------------------------------
+                      00264 ; I code from now on!
+                      00265 ; ; Starting pCode block
+gpasm-1.4.0 #1107 (May  9 2015) build/sdcc/pr   12-2-2016  22:31:28         PAGE  6
+
+
+LOC    OBJECT CODE    LINE  SOURCE TEXT
+  VALUE
+
+                      00266 S_RF24Mesh_Example__loop        code
+000000                00267 _loop:
+                      00268 ;       .line   59; RF24Mesh_Example.c  void loop() {
+000000 CFDA FFE5      00269         MOVFF   FSR2H, POSTDEC1
+000004 CFD9 FFE5      00270         MOVFF   FSR2L, POSTDEC1
+000008 CFE2 FFDA      00271         MOVFF   FSR1H, FSR2H
+00000C CFE1 FFD9      00272         MOVFF   FSR1L, FSR2L
+000010 C??? F???      00273         MOVFF   r0x00, POSTDEC1
+000014 C??? F???      00274         MOVFF   r0x01, POSTDEC1
+000018 C??? F???      00275         MOVFF   r0x02, POSTDEC1
+00001C C??? F???      00276         MOVFF   r0x03, POSTDEC1
+000020 C??? F???      00277         MOVFF   r0x04, POSTDEC1
+000024 C??? F???      00278         MOVFF   r0x05, POSTDEC1
+                      00279 ;       .line   61; RF24Mesh_Example.c  RF24M_update();
+000028 EC?? F0??      00280         CALL    _RF24M_update
+                      00281 ;       .line   64; RF24Mesh_Example.c  if (millis() - displayTimer >= 1000) {
+00002C EC?? F0??      00282         CALL    _millis
+Message[1301]: Using default destination of 0 (Access Bank).
+000030 6E??           00283         MOVWF   r0x00
+000032 CFF3 F000      00284         MOVFF   PRODL, r0x01
+000036 CFF4 F000      00285         MOVFF   PRODH, r0x02
+00003A CFE9 F000      00286         MOVFF   FSR0L, r0x03
+00003E ????           00287         BANKSEL _displayTimer
+000040 51??           00288         MOVF    _displayTimer, W, B
+000042 5E??           00289         SUBWF   r0x00, F
+000044 ????           00290         BANKSEL (_displayTimer + 1)
+000046 51??           00291         MOVF    (_displayTimer + 1), W, B
+000048 5A??           00292         SUBWFB  r0x01, F
+00004A ????           00293         BANKSEL (_displayTimer + 2)
+00004C 51??           00294         MOVF    (_displayTimer + 2), W, B
+00004E 5A??           00295         SUBWFB  r0x02, F
+000050 ????           00296         BANKSEL (_displayTimer + 3)
+000052 51??           00297         MOVF    (_displayTimer + 3), W, B
+000054 5A??           00298         SUBWFB  r0x03, F
+000056 0E00           00299         MOVLW   0x00
+000058 5C??           00300         SUBWF   r0x03, W
+00005A E1??           00301         BNZ     _00138_DS_
+00005C 0E00           00302         MOVLW   0x00
+00005E 5C??           00303         SUBWF   r0x02, W
+000060 E1??           00304         BNZ     _00138_DS_
+000062 0E03           00305         MOVLW   0x03
+000064 5C??           00306         SUBWF   r0x01, W
+000066 E1??           00307         BNZ     _00138_DS_
+000068 0EE8           00308         MOVLW   0xe8
+00006A 5C??           00309         SUBWF   r0x00, W
+00006C                00310 _00138_DS_:
+00006C A0D8           00311         BTFSS   STATUS, 0
+00006E D???           00312         BRA     _00118_DS_
+                      00313 ;       .line   65; RF24Mesh_Example.c  displayTimer = millis();
+000070 EC?? F0??      00314         CALL    _millis
+000074 ????           00315         BANKSEL _displayTimer
+000076 6F??           00316         MOVWF   _displayTimer, B
+000078 CFF3 F000      00317         MOVFF   PRODL, (_displayTimer + 1)
+gpasm-1.4.0 #1107 (May  9 2015) build/sdcc/pr   12-2-2016  22:31:28         PAGE  7
+
+
+LOC    OBJECT CODE    LINE  SOURCE TEXT
+  VALUE
+
+00007C CFF4 F000      00318         MOVFF   PRODH, (_displayTimer + 2)
+000080 CFE9 F000      00319         MOVFF   FSR0L, (_displayTimer + 3)
+                      00320 ;       .line   68; RF24Mesh_Example.c  if (!RF24M_write(&displayTimer, 'M', sizeof(displayTimer),0)) {
+000084 0E??           00321         MOVLW   HIGH(_displayTimer)
+Message[1301]: Using default destination of 0 (Access Bank).
+000086 6E??           00322         MOVWF   r0x01
+000088 0E??           00323         MOVLW   LOW(_displayTimer)
+Message[1301]: Using default destination of 0 (Access Bank).
+00008A 6E??           00324         MOVWF   r0x00
+00008C 0E80           00325         MOVLW   0x80
+Message[1301]: Using default destination of 0 (Access Bank).
+00008E 6E??           00326         MOVWF   r0x02
+000090 0E00           00327         MOVLW   0x00
+Message[1301]: Using default destination of 0 (Access Bank).
+000092 6EE5           00328         MOVWF   POSTDEC1
+000094 0E00           00329         MOVLW   0x00
+Message[1301]: Using default destination of 0 (Access Bank).
+000096 6EE5           00330         MOVWF   POSTDEC1
+000098 0E04           00331         MOVLW   0x04
+Message[1301]: Using default destination of 0 (Access Bank).
+00009A 6EE5           00332         MOVWF   POSTDEC1
+00009C 0E4D           00333         MOVLW   0x4d
+Message[1301]: Using default destination of 0 (Access Bank).
+00009E 6EE5           00334         MOVWF   POSTDEC1
+0000A0 50??           00335         MOVF    r0x02, W
+Message[1301]: Using default destination of 0 (Access Bank).
+0000A2 6EE5           00336         MOVWF   POSTDEC1
+0000A4 50??           00337         MOVF    r0x01, W
+Message[1301]: Using default destination of 0 (Access Bank).
+0000A6 6EE5           00338         MOVWF   POSTDEC1
+0000A8 50??           00339         MOVF    r0x00, W
+Message[1301]: Using default destination of 0 (Access Bank).
+0000AA 6EE5           00340         MOVWF   POSTDEC1
+0000AC EC?? F0??      00341         CALL    _RF24M_write
+Message[1301]: Using default destination of 0 (Access Bank).
+0000B0 6E??           00342         MOVWF   r0x00
+0000B2 0E07           00343         MOVLW   0x07
+0000B4 26E1           00344         ADDWF   FSR1L, F
+0000B6 B0D8           00345         BTFSC   STATUS, 0
+0000B8 2AE2           00346         INCF    FSR1H, F
+0000BA 50??           00347         MOVF    r0x00, W
+0000BC E1??           00348         BNZ     _00114_DS_
+                      00349 ;       .line   71; RF24Mesh_Example.c  if ( ! RF24M_checkConnection() ) {
+0000BE EC?? F0??      00350         CALL    _RF24M_checkConnection
+Message[1301]: Using default destination of 0 (Access Bank).
+0000C2 6E??           00351         MOVWF   r0x00
+0000C4 50??           00352         MOVF    r0x00, W
+0000C6 E1??           00353         BNZ     _00111_DS_
+                      00354 ;       .line   73; RF24Mesh_Example.c  Serial_println("Renewing Address");
+0000C8 0E??           00355         MOVLW   UPPER(___str_1)
+Message[1301]: Using default destination of 0 (Access Bank).
+0000CA 6E??           00356         MOVWF   r0x02
+0000CC 0E??           00357         MOVLW   HIGH(___str_1)
+gpasm-1.4.0 #1107 (May  9 2015) build/sdcc/pr   12-2-2016  22:31:28         PAGE  8
+
+
+LOC    OBJECT CODE    LINE  SOURCE TEXT
+  VALUE
+
+Message[1301]: Using default destination of 0 (Access Bank).
+0000CE 6E??           00358         MOVWF   r0x01
+0000D0 0E??           00359         MOVLW   LOW(___str_1)
+Message[1301]: Using default destination of 0 (Access Bank).
+0000D2 6E??           00360         MOVWF   r0x00
+0000D4 50??           00361         MOVF    r0x02, W
+Message[1301]: Using default destination of 0 (Access Bank).
+0000D6 6EE5           00362         MOVWF   POSTDEC1
+0000D8 50??           00363         MOVF    r0x01, W
+Message[1301]: Using default destination of 0 (Access Bank).
+0000DA 6EE5           00364         MOVWF   POSTDEC1
+0000DC 50??           00365         MOVF    r0x00, W
+Message[1301]: Using default destination of 0 (Access Bank).
+0000DE 6EE5           00366         MOVWF   POSTDEC1
+0000E0 EC?? F0??      00367         CALL    _Serial_println
+0000E4 0E03           00368         MOVLW   0x03
+0000E6 26E1           00369         ADDWF   FSR1L, F
+0000E8 B0D8           00370         BTFSC   STATUS, 0
+0000EA 2AE2           00371         INCF    FSR1H, F
+                      00372 ;       .line   74; RF24Mesh_Example.c  RF24M_renewAddress(MESH_RENEWAL_TIMEOUT);
+0000EC 0E00           00373         MOVLW   0x00
+Message[1301]: Using default destination of 0 (Access Bank).
+0000EE 6EE5           00374         MOVWF   POSTDEC1
+0000F0 0E00           00375         MOVLW   0x00
+Message[1301]: Using default destination of 0 (Access Bank).
+0000F2 6EE5           00376         MOVWF   POSTDEC1
+0000F4 0EEA           00377         MOVLW   0xea
+Message[1301]: Using default destination of 0 (Access Bank).
+0000F6 6EE5           00378         MOVWF   POSTDEC1
+0000F8 0E60           00379         MOVLW   0x60
+Message[1301]: Using default destination of 0 (Access Bank).
+0000FA 6EE5           00380         MOVWF   POSTDEC1
+0000FC EC?? F0??      00381         CALL    _RF24M_renewAddress
+000100 0E04           00382         MOVLW   0x04
+000102 26E1           00383         ADDWF   FSR1L, F
+000104 B0D8           00384         BTFSC   STATUS, 0
+000106 2AE2           00385         INCF    FSR1H, F
+000108 D???           00386         BRA     _00118_DS_
+00010A                00387 _00111_DS_:
+                      00388 ;       .line   76; RF24Mesh_Example.c  Serial_println("Send fail, Test OK");
+00010A 0E??           00389         MOVLW   UPPER(___str_2)
+Message[1301]: Using default destination of 0 (Access Bank).
+00010C 6E??           00390         MOVWF   r0x02
+00010E 0E??           00391         MOVLW   HIGH(___str_2)
+Message[1301]: Using default destination of 0 (Access Bank).
+000110 6E??           00392         MOVWF   r0x01
+000112 0E??           00393         MOVLW   LOW(___str_2)
+Message[1301]: Using default destination of 0 (Access Bank).
+000114 6E??           00394         MOVWF   r0x00
+000116 50??           00395         MOVF    r0x02, W
+Message[1301]: Using default destination of 0 (Access Bank).
+000118 6EE5           00396         MOVWF   POSTDEC1
+00011A 50??           00397         MOVF    r0x01, W
+gpasm-1.4.0 #1107 (May  9 2015) build/sdcc/pr   12-2-2016  22:31:28         PAGE  9
+
+
+LOC    OBJECT CODE    LINE  SOURCE TEXT
+  VALUE
+
+Message[1301]: Using default destination of 0 (Access Bank).
+00011C 6EE5           00398         MOVWF   POSTDEC1
+00011E 50??           00399         MOVF    r0x00, W
+Message[1301]: Using default destination of 0 (Access Bank).
+000120 6EE5           00400         MOVWF   POSTDEC1
+000122 EC?? F0??      00401         CALL    _Serial_println
+000126 0E03           00402         MOVLW   0x03
+000128 26E1           00403         ADDWF   FSR1L, F
+00012A B0D8           00404         BTFSC   STATUS, 0
+00012C 2AE2           00405         INCF    FSR1H, F
+00012E D???           00406         BRA     _00118_DS_
+000130                00407 _00114_DS_:
+                      00408 ;       .line   79; RF24Mesh_Example.c  Serial_print("Send OK: "); Serial_println(itoa_(displayTimer));
+000130 0E??           00409         MOVLW   UPPER(___str_3)
+Message[1301]: Using default destination of 0 (Access Bank).
+000132 6E??           00410         MOVWF   r0x02
+000134 0E??           00411         MOVLW   HIGH(___str_3)
+Message[1301]: Using default destination of 0 (Access Bank).
+000136 6E??           00412         MOVWF   r0x01
+000138 0E??           00413         MOVLW   LOW(___str_3)
+Message[1301]: Using default destination of 0 (Access Bank).
+00013A 6E??           00414         MOVWF   r0x00
+00013C 50??           00415         MOVF    r0x02, W
+Message[1301]: Using default destination of 0 (Access Bank).
+00013E 6EE5           00416         MOVWF   POSTDEC1
+000140 50??           00417         MOVF    r0x01, W
+Message[1301]: Using default destination of 0 (Access Bank).
+000142 6EE5           00418         MOVWF   POSTDEC1
+000144 50??           00419         MOVF    r0x00, W
+Message[1301]: Using default destination of 0 (Access Bank).
+000146 6EE5           00420         MOVWF   POSTDEC1
+000148 EC?? F0??      00421         CALL    _Serial_print
+00014C 0E03           00422         MOVLW   0x03
+00014E 26E1           00423         ADDWF   FSR1L, F
+000150 B0D8           00424         BTFSC   STATUS, 0
+000152 2AE2           00425         INCF    FSR1H, F
+000154 ????           00426         BANKSEL (_displayTimer + 3)
+000156 51??           00427         MOVF    (_displayTimer + 3), W, B
+Message[1301]: Using default destination of 0 (Access Bank).
+000158 6EE5           00428         MOVWF   POSTDEC1
+00015A ????           00429         BANKSEL (_displayTimer + 2)
+00015C 51??           00430         MOVF    (_displayTimer + 2), W, B
+Message[1301]: Using default destination of 0 (Access Bank).
+00015E 6EE5           00431         MOVWF   POSTDEC1
+000160 ????           00432         BANKSEL (_displayTimer + 1)
+000162 51??           00433         MOVF    (_displayTimer + 1), W, B
+Message[1301]: Using default destination of 0 (Access Bank).
+000164 6EE5           00434         MOVWF   POSTDEC1
+000166 ????           00435         BANKSEL _displayTimer
+000168 51??           00436         MOVF    _displayTimer, W, B
+Message[1301]: Using default destination of 0 (Access Bank).
+00016A 6EE5           00437         MOVWF   POSTDEC1
+00016C EC?? F0??      00438         CALL    _itoa_
+gpasm-1.4.0 #1107 (May  9 2015) build/sdcc/pr   12-2-2016  22:31:28         PAGE 10
+
+
+LOC    OBJECT CODE    LINE  SOURCE TEXT
+  VALUE
+
+Message[1301]: Using default destination of 0 (Access Bank).
+000170 6E??           00439         MOVWF   r0x00
+000172 CFF3 F000      00440         MOVFF   PRODL, r0x01
+000176 CFF4 F000      00441         MOVFF   PRODH, r0x02
+00017A 0E04           00442         MOVLW   0x04
+00017C 26E1           00443         ADDWF   FSR1L, F
+00017E B0D8           00444         BTFSC   STATUS, 0
+000180 2AE2           00445         INCF    FSR1H, F
+000182 50??           00446         MOVF    r0x02, W
+Message[1301]: Using default destination of 0 (Access Bank).
+000184 6EE5           00447         MOVWF   POSTDEC1
+000186 50??           00448         MOVF    r0x01, W
+Message[1301]: Using default destination of 0 (Access Bank).
+000188 6EE5           00449         MOVWF   POSTDEC1
+00018A 50??           00450         MOVF    r0x00, W
+Message[1301]: Using default destination of 0 (Access Bank).
+00018C 6EE5           00451         MOVWF   POSTDEC1
+00018E EC?? F0??      00452         CALL    _Serial_println
+000192 0E03           00453         MOVLW   0x03
+000194 26E1           00454         ADDWF   FSR1L, F
+000196 B0D8           00455         BTFSC   STATUS, 0
+000198 2AE2           00456         INCF    FSR1H, F
+00019A                00457 _00118_DS_:
+                      00458 ;       .line   83; RF24Mesh_Example.c  while (RF24N_available()) {
+00019A EC?? F0??      00459         CALL    _RF24N_available
+Message[1301]: Using default destination of 0 (Access Bank).
+00019E 6E??           00460         MOVWF   r0x00
+0001A0 50??           00461         MOVF    r0x00, W
+0001A2 B4D8           00462         BTFSC   STATUS, 2
+0001A4 D???           00463         BRA     _00121_DS_
+                      00464 ;       .line   86; RF24Mesh_Example.c  RF24N_read( &header, &payload, sizeof(payload));
+0001A6 0E??           00465         MOVLW   HIGH(_loop_header_2_206)
+Message[1301]: Using default destination of 0 (Access Bank).
+0001A8 6E??           00466         MOVWF   r0x01
+0001AA 0E??           00467         MOVLW   LOW(_loop_header_2_206)
+Message[1301]: Using default destination of 0 (Access Bank).
+0001AC 6E??           00468         MOVWF   r0x00
+0001AE 0E80           00469         MOVLW   0x80
+Message[1301]: Using default destination of 0 (Access Bank).
+0001B0 6E??           00470         MOVWF   r0x02
+0001B2 0E??           00471         MOVLW   HIGH(_loop_payload_2_206)
+Message[1301]: Using default destination of 0 (Access Bank).
+0001B4 6E??           00472         MOVWF   r0x04
+0001B6 0E??           00473         MOVLW   LOW(_loop_payload_2_206)
+Message[1301]: Using default destination of 0 (Access Bank).
+0001B8 6E??           00474         MOVWF   r0x03
+0001BA 0E80           00475         MOVLW   0x80
+Message[1301]: Using default destination of 0 (Access Bank).
+0001BC 6E??           00476         MOVWF   r0x05
+0001BE 0E00           00477         MOVLW   0x00
+Message[1301]: Using default destination of 0 (Access Bank).
+0001C0 6EE5           00478         MOVWF   POSTDEC1
+0001C2 0E08           00479         MOVLW   0x08
+gpasm-1.4.0 #1107 (May  9 2015) build/sdcc/pr   12-2-2016  22:31:28         PAGE 11
+
+
+LOC    OBJECT CODE    LINE  SOURCE TEXT
+  VALUE
+
+Message[1301]: Using default destination of 0 (Access Bank).
+0001C4 6EE5           00480         MOVWF   POSTDEC1
+0001C6 50??           00481         MOVF    r0x05, W
+Message[1301]: Using default destination of 0 (Access Bank).
+0001C8 6EE5           00482         MOVWF   POSTDEC1
+0001CA 50??           00483         MOVF    r0x04, W
+Message[1301]: Using default destination of 0 (Access Bank).
+0001CC 6EE5           00484         MOVWF   POSTDEC1
+0001CE 50??           00485         MOVF    r0x03, W
+Message[1301]: Using default destination of 0 (Access Bank).
+0001D0 6EE5           00486         MOVWF   POSTDEC1
+0001D2 50??           00487         MOVF    r0x02, W
+Message[1301]: Using default destination of 0 (Access Bank).
+0001D4 6EE5           00488         MOVWF   POSTDEC1
+0001D6 50??           00489         MOVF    r0x01, W
+Message[1301]: Using default destination of 0 (Access Bank).
+0001D8 6EE5           00490         MOVWF   POSTDEC1
+0001DA 50??           00491         MOVF    r0x00, W
+Message[1301]: Using default destination of 0 (Access Bank).
+0001DC 6EE5           00492         MOVWF   POSTDEC1
+0001DE EC?? F0??      00493         CALL    _RF24N_read
+0001E2 0E08           00494         MOVLW   0x08
+0001E4 26E1           00495         ADDWF   FSR1L, F
+0001E6 B0D8           00496         BTFSC   STATUS, 0
+0001E8 2AE2           00497         INCF    FSR1H, F
+                      00498 ;       .line   87; RF24Mesh_Example.c  Serial_print("Received packet #");
+0001EA 0E??           00499         MOVLW   UPPER(___str_4)
+Message[1301]: Using default destination of 0 (Access Bank).
+0001EC 6E??           00500         MOVWF   r0x02
+0001EE 0E??           00501         MOVLW   HIGH(___str_4)
+Message[1301]: Using default destination of 0 (Access Bank).
+0001F0 6E??           00502         MOVWF   r0x01
+0001F2 0E??           00503         MOVLW   LOW(___str_4)
+Message[1301]: Using default destination of 0 (Access Bank).
+0001F4 6E??           00504         MOVWF   r0x00
+0001F6 50??           00505         MOVF    r0x02, W
+Message[1301]: Using default destination of 0 (Access Bank).
+0001F8 6EE5           00506         MOVWF   POSTDEC1
+0001FA 50??           00507         MOVF    r0x01, W
+Message[1301]: Using default destination of 0 (Access Bank).
+0001FC 6EE5           00508         MOVWF   POSTDEC1
+0001FE 50??           00509         MOVF    r0x00, W
+Message[1301]: Using default destination of 0 (Access Bank).
+000200 6EE5           00510         MOVWF   POSTDEC1
+000202 EC?? F0??      00511         CALL    _Serial_print
+000206 0E03           00512         MOVLW   0x03
+000208 26E1           00513         ADDWF   FSR1L, F
+00020A B0D8           00514         BTFSC   STATUS, 0
+00020C 2AE2           00515         INCF    FSR1H, F
+00020E ????           00516         BANKSEL (_loop_payload_2_206 + 7)
+                      00517 ;       .line   88; RF24Mesh_Example.c  Serial_print(itoa_(payload.counter));
+000210 51??           00518         MOVF    (_loop_payload_2_206 + 7), W, B
+Message[1301]: Using default destination of 0 (Access Bank).
+gpasm-1.4.0 #1107 (May  9 2015) build/sdcc/pr   12-2-2016  22:31:28         PAGE 12
+
+
+LOC    OBJECT CODE    LINE  SOURCE TEXT
+  VALUE
+
+000212 6EE5           00519         MOVWF   POSTDEC1
+000214 ????           00520         BANKSEL (_loop_payload_2_206 + 6)
+000216 51??           00521         MOVF    (_loop_payload_2_206 + 6), W, B
+Message[1301]: Using default destination of 0 (Access Bank).
+000218 6EE5           00522         MOVWF   POSTDEC1
+00021A ????           00523         BANKSEL (_loop_payload_2_206 + 5)
+00021C 51??           00524         MOVF    (_loop_payload_2_206 + 5), W, B
+Message[1301]: Using default destination of 0 (Access Bank).
+00021E 6EE5           00525         MOVWF   POSTDEC1
+000220 ????           00526         BANKSEL (_loop_payload_2_206 + 4)
+000222 51??           00527         MOVF    (_loop_payload_2_206 + 4), W, B
+Message[1301]: Using default destination of 0 (Access Bank).
+000224 6EE5           00528         MOVWF   POSTDEC1
+000226 EC?? F0??      00529         CALL    _itoa_
+Message[1301]: Using default destination of 0 (Access Bank).
+00022A 6E??           00530         MOVWF   r0x00
+00022C CFF3 F000      00531         MOVFF   PRODL, r0x01
+000230 CFF4 F000      00532         MOVFF   PRODH, r0x02
+000234 0E04           00533         MOVLW   0x04
+000236 26E1           00534         ADDWF   FSR1L, F
+000238 B0D8           00535         BTFSC   STATUS, 0
+00023A 2AE2           00536         INCF    FSR1H, F
+00023C 50??           00537         MOVF    r0x02, W
+Message[1301]: Using default destination of 0 (Access Bank).
+00023E 6EE5           00538         MOVWF   POSTDEC1
+000240 50??           00539         MOVF    r0x01, W
+Message[1301]: Using default destination of 0 (Access Bank).
+000242 6EE5           00540         MOVWF   POSTDEC1
+000244 50??           00541         MOVF    r0x00, W
+Message[1301]: Using default destination of 0 (Access Bank).
+000246 6EE5           00542         MOVWF   POSTDEC1
+000248 EC?? F0??      00543         CALL    _Serial_print
+00024C 0E03           00544         MOVLW   0x03
+00024E 26E1           00545         ADDWF   FSR1L, F
+000250 B0D8           00546         BTFSC   STATUS, 0
+000252 2AE2           00547         INCF    FSR1H, F
+                      00548 ;       .line   89; RF24Mesh_Example.c  Serial_print(" at ");
+000254 0E??           00549         MOVLW   UPPER(___str_5)
+Message[1301]: Using default destination of 0 (Access Bank).
+000256 6E??           00550         MOVWF   r0x02
+000258 0E??           00551         MOVLW   HIGH(___str_5)
+Message[1301]: Using default destination of 0 (Access Bank).
+00025A 6E??           00552         MOVWF   r0x01
+00025C 0E??           00553         MOVLW   LOW(___str_5)
+Message[1301]: Using default destination of 0 (Access Bank).
+00025E 6E??           00554         MOVWF   r0x00
+000260 50??           00555         MOVF    r0x02, W
+Message[1301]: Using default destination of 0 (Access Bank).
+000262 6EE5           00556         MOVWF   POSTDEC1
+000264 50??           00557         MOVF    r0x01, W
+Message[1301]: Using default destination of 0 (Access Bank).
+000266 6EE5           00558         MOVWF   POSTDEC1
+000268 50??           00559         MOVF    r0x00, W
+gpasm-1.4.0 #1107 (May  9 2015) build/sdcc/pr   12-2-2016  22:31:28         PAGE 13
+
+
+LOC    OBJECT CODE    LINE  SOURCE TEXT
+  VALUE
+
+Message[1301]: Using default destination of 0 (Access Bank).
+00026A 6EE5           00560         MOVWF   POSTDEC1
+00026C EC?? F0??      00561         CALL    _Serial_print
+000270 0E03           00562         MOVLW   0x03
+000272 26E1           00563         ADDWF   FSR1L, F
+000274 B0D8           00564         BTFSC   STATUS, 0
+000276 2AE2           00565         INCF    FSR1H, F
+000278 ????           00566         BANKSEL (_loop_payload_2_206 + 3)
+                      00567 ;       .line   90; RF24Mesh_Example.c  Serial_println(itoa_(payload.ms));
+00027A 51??           00568         MOVF    (_loop_payload_2_206 + 3), W, B
+Message[1301]: Using default destination of 0 (Access Bank).
+00027C 6EE5           00569         MOVWF   POSTDEC1
+00027E ????           00570         BANKSEL (_loop_payload_2_206 + 2)
+000280 51??           00571         MOVF    (_loop_payload_2_206 + 2), W, B
+Message[1301]: Using default destination of 0 (Access Bank).
+000282 6EE5           00572         MOVWF   POSTDEC1
+000284 ????           00573         BANKSEL (_loop_payload_2_206 + 1)
+000286 51??           00574         MOVF    (_loop_payload_2_206 + 1), W, B
+Message[1301]: Using default destination of 0 (Access Bank).
+000288 6EE5           00575         MOVWF   POSTDEC1
+00028A ????           00576         BANKSEL _loop_payload_2_206
+00028C 51??           00577         MOVF    _loop_payload_2_206, W, B
+Message[1301]: Using default destination of 0 (Access Bank).
+00028E 6EE5           00578         MOVWF   POSTDEC1
+000290 EC?? F0??      00579         CALL    _itoa_
+Message[1301]: Using default destination of 0 (Access Bank).
+000294 6E??           00580         MOVWF   r0x00
+000296 CFF3 F000      00581         MOVFF   PRODL, r0x01
+00029A CFF4 F000      00582         MOVFF   PRODH, r0x02
+00029E 0E04           00583         MOVLW   0x04
+0002A0 26E1           00584         ADDWF   FSR1L, F
+0002A2 B0D8           00585         BTFSC   STATUS, 0
+0002A4 2AE2           00586         INCF    FSR1H, F
+0002A6 50??           00587         MOVF    r0x02, W
+Message[1301]: Using default destination of 0 (Access Bank).
+0002A8 6EE5           00588         MOVWF   POSTDEC1
+0002AA 50??           00589         MOVF    r0x01, W
+Message[1301]: Using default destination of 0 (Access Bank).
+0002AC 6EE5           00590         MOVWF   POSTDEC1
+0002AE 50??           00591         MOVF    r0x00, W
+Message[1301]: Using default destination of 0 (Access Bank).
+0002B0 6EE5           00592         MOVWF   POSTDEC1
+0002B2 EC?? F0??      00593         CALL    _Serial_println
+0002B6 0E03           00594         MOVLW   0x03
+0002B8 26E1           00595         ADDWF   FSR1L, F
+0002BA B0D8           00596         BTFSC   STATUS, 0
+0002BC 2AE2           00597         INCF    FSR1H, F
+0002BE D???           00598         BRA     _00118_DS_
+0002C0                00599 _00121_DS_:
+0002C0 CFE4 F000      00600         MOVFF   PREINC1, r0x05
+0002C4 CFE4 F000      00601         MOVFF   PREINC1, r0x04
+0002C8 CFE4 F000      00602         MOVFF   PREINC1, r0x03
+0002CC CFE4 F000      00603         MOVFF   PREINC1, r0x02
+gpasm-1.4.0 #1107 (May  9 2015) build/sdcc/pr   12-2-2016  22:31:28         PAGE 14
+
+
+LOC    OBJECT CODE    LINE  SOURCE TEXT
+  VALUE
+
+0002D0 CFE4 F000      00604         MOVFF   PREINC1, r0x01
+0002D4 CFE4 F000      00605         MOVFF   PREINC1, r0x00
+0002D8 CFE4 FFD9      00606         MOVFF   PREINC1, FSR2L
+0002DC CFE4 FFDA      00607         MOVFF   PREINC1, FSR2H
+0002E0 0012           00608         RETURN  
+                      00609 
+                      00610 ; ; Starting pCode block
+                      00611 S_RF24Mesh_Example__setup       code
+000000                00612 _setup:
+                      00613 ;       .line   41; RF24Mesh_Example.c  void setup() {
+000000 CFDA FFE5      00614         MOVFF   FSR2H, POSTDEC1
+000004 CFD9 FFE5      00615         MOVFF   FSR2L, POSTDEC1
+000008 CFE2 FFDA      00616         MOVFF   FSR1H, FSR2H
+00000C CFE1 FFD9      00617         MOVFF   FSR1L, FSR2L
+000010 C??? F???      00618         MOVFF   r0x00, POSTDEC1
+000014 C??? F???      00619         MOVFF   r0x01, POSTDEC1
+000018 C??? F???      00620         MOVFF   r0x02, POSTDEC1
+                      00621 ;       .line   43; RF24Mesh_Example.c  RF24_init(36,35);
+00001C 0E23           00622         MOVLW   0x23
+Message[1301]: Using default destination of 0 (Access Bank).
+00001E 6EE5           00623         MOVWF   POSTDEC1
+000020 0E24           00624         MOVLW   0x24
+Message[1301]: Using default destination of 0 (Access Bank).
+000022 6EE5           00625         MOVWF   POSTDEC1
+000024 EC?? F0??      00626         CALL    _RF24_init
+000028 52E6           00627         MOVF    POSTINC1, F
+00002A 52E6           00628         MOVF    POSTINC1, F
+                      00629 ;       .line   44; RF24Mesh_Example.c  RF24N_init();
+00002C EC?? F0??      00630         CALL    _RF24N_init
+                      00631 ;       .line   45; RF24Mesh_Example.c  RF24M_init(); 
+000030 EC?? F0??      00632         CALL    _RF24M_init
+                      00633 ;       .line   47; RF24Mesh_Example.c  Serial_begin(115200);
+000034 0E00           00634         MOVLW   0x00
+Message[1301]: Using default destination of 0 (Access Bank).
+000036 6EE5           00635         MOVWF   POSTDEC1
+000038 0E01           00636         MOVLW   0x01
+Message[1301]: Using default destination of 0 (Access Bank).
+00003A 6EE5           00637         MOVWF   POSTDEC1
+00003C 0EC2           00638         MOVLW   0xc2
+Message[1301]: Using default destination of 0 (Access Bank).
+00003E 6EE5           00639         MOVWF   POSTDEC1
+000040 0E00           00640         MOVLW   0x00
+Message[1301]: Using default destination of 0 (Access Bank).
+000042 6EE5           00641         MOVWF   POSTDEC1
+000044 EC?? F0??      00642         CALL    _Serial_begin
+000048 0E04           00643         MOVLW   0x04
+00004A 26E1           00644         ADDWF   FSR1L, F
+00004C B0D8           00645         BTFSC   STATUS, 0
+00004E 2AE2           00646         INCF    FSR1H, F
+                      00647 ;       .line   50; RF24Mesh_Example.c  RF24M_setNodeID(nodeID);    
+000050 0E01           00648         MOVLW   0x01
+Message[1301]: Using default destination of 0 (Access Bank).
+000052 6EE5           00649         MOVWF   POSTDEC1
+gpasm-1.4.0 #1107 (May  9 2015) build/sdcc/pr   12-2-2016  22:31:28         PAGE 15
+
+
+LOC    OBJECT CODE    LINE  SOURCE TEXT
+  VALUE
+
+000054 EC?? F0??      00650         CALL    _RF24M_setNodeID
+000058 52E6           00651         MOVF    POSTINC1, F
+                      00652 ;       .line   52; RF24Mesh_Example.c  Serial_println(F("Connecting to the mesh..."));
+00005A 0E??           00653         MOVLW   UPPER(___str_0)
+Message[1301]: Using default destination of 0 (Access Bank).
+00005C 6E??           00654         MOVWF   r0x02
+00005E 0E??           00655         MOVLW   HIGH(___str_0)
+Message[1301]: Using default destination of 0 (Access Bank).
+000060 6E??           00656         MOVWF   r0x01
+000062 0E??           00657         MOVLW   LOW(___str_0)
+Message[1301]: Using default destination of 0 (Access Bank).
+000064 6E??           00658         MOVWF   r0x00
+000066 50??           00659         MOVF    r0x02, W
+Message[1301]: Using default destination of 0 (Access Bank).
+000068 6EE5           00660         MOVWF   POSTDEC1
+00006A 50??           00661         MOVF    r0x01, W
+Message[1301]: Using default destination of 0 (Access Bank).
+00006C 6EE5           00662         MOVWF   POSTDEC1
+00006E 50??           00663         MOVF    r0x00, W
+Message[1301]: Using default destination of 0 (Access Bank).
+000070 6EE5           00664         MOVWF   POSTDEC1
+000072 EC?? F0??      00665         CALL    _Serial_println
+000076 0E03           00666         MOVLW   0x03
+000078 26E1           00667         ADDWF   FSR1L, F
+00007A B0D8           00668         BTFSC   STATUS, 0
+00007C 2AE2           00669         INCF    FSR1H, F
+                      00670 ;       .line   53; RF24Mesh_Example.c  RF24M_begin(MESH_DEFAULT_CHANNEL, RF24_1MBPS, MESH_RENEWAL_TIMEO
+                            UT );
+00007E 0E00           00671         MOVLW   0x00
+Message[1301]: Using default destination of 0 (Access Bank).
+000080 6EE5           00672         MOVWF   POSTDEC1
+000082 0E00           00673         MOVLW   0x00
+Message[1301]: Using default destination of 0 (Access Bank).
+000084 6EE5           00674         MOVWF   POSTDEC1
+000086 0EEA           00675         MOVLW   0xea
+Message[1301]: Using default destination of 0 (Access Bank).
+000088 6EE5           00676         MOVWF   POSTDEC1
+00008A 0E60           00677         MOVLW   0x60
+Message[1301]: Using default destination of 0 (Access Bank).
+00008C 6EE5           00678         MOVWF   POSTDEC1
+00008E 0E00           00679         MOVLW   0x00
+Message[1301]: Using default destination of 0 (Access Bank).
+000090 6EE5           00680         MOVWF   POSTDEC1
+000092 0E61           00681         MOVLW   0x61
+Message[1301]: Using default destination of 0 (Access Bank).
+000094 6EE5           00682         MOVWF   POSTDEC1
+000096 EC?? F0??      00683         CALL    _RF24M_begin
+00009A 0E06           00684         MOVLW   0x06
+00009C 26E1           00685         ADDWF   FSR1L, F
+00009E B0D8           00686         BTFSC   STATUS, 0
+0000A0 2AE2           00687         INCF    FSR1H, F
+0000A2 CFE4 F000      00688         MOVFF   PREINC1, r0x02
+0000A6 CFE4 F000      00689         MOVFF   PREINC1, r0x01
+gpasm-1.4.0 #1107 (May  9 2015) build/sdcc/pr   12-2-2016  22:31:28         PAGE 16
+
+
+LOC    OBJECT CODE    LINE  SOURCE TEXT
+  VALUE
+
+0000AA CFE4 F000      00690         MOVFF   PREINC1, r0x00
+0000AE CFE4 FFD9      00691         MOVFF   PREINC1, FSR2L
+0000B2 CFE4 FFDA      00692         MOVFF   PREINC1, FSR2H
+0000B6 0012           00693         RETURN  
+                      00694 
+                      00695 ; ; Starting pCode block
+0000B8                00696 ___str_0:
+0000B8 6F43 6E6E 6365 00697         DB      0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x69, 0x6e, 0x67, 0x20, 0x74
+       6974 676E 7420 
+0000C4 206F 6874 2065 00698         DB      0x6f, 0x20, 0x74, 0x68, 0x65, 0x20, 0x6d, 0x65, 0x73, 0x68, 0x2e, 0x2e
+       656D 6873 2E2E 
+0000D0 002E           00699         DB      0x2e, 0x00
+                      00700 ; ; Starting pCode block
+0000D2                00701 ___str_1:
+0000D2 6552 656E 6977 00702         DB      0x52, 0x65, 0x6e, 0x65, 0x77, 0x69, 0x6e, 0x67, 0x20, 0x41, 0x64, 0x64
+       676E 4120 6464 
+0000DE 6572 7373 0000 00703         DB      0x72, 0x65, 0x73, 0x73, 0x00
+                      00704 ; ; Starting pCode block
+0000E4                00705 ___str_2:
+0000E4 6553 646E 6620 00706         DB      0x53, 0x65, 0x6e, 0x64, 0x20, 0x66, 0x61, 0x69, 0x6c, 0x2c, 0x20, 0x54
+       6961 2C6C 5420 
+0000F0 7365 2074 4B4F 00707         DB      0x65, 0x73, 0x74, 0x20, 0x4f, 0x4b, 0x00
+       0000           
+                      00708 ; ; Starting pCode block
+0000F8                00709 ___str_3:
+0000F8 6553 646E 4F20 00710         DB      0x53, 0x65, 0x6e, 0x64, 0x20, 0x4f, 0x4b, 0x3a, 0x20, 0x00
+       3A4B 0020      
+                      00711 ; ; Starting pCode block
+000102                00712 ___str_4:
+000102 6552 6563 7669 00713         DB      0x52, 0x65, 0x63, 0x65, 0x69, 0x76, 0x65, 0x64, 0x20, 0x70, 0x61, 0x63
+       6465 7020 6361 
+00010E 656B 2074 0023 00714         DB      0x6b, 0x65, 0x74, 0x20, 0x23, 0x00
+                      00715 ; ; Starting pCode block
+000114                00716 ___str_5:
+000114 6120 2074 0000 00717         DB      0x20, 0x61, 0x74, 0x20, 0x00
+                      00718 
+                      00719 
+                      00720 ; Statistics:
+                      00721 ; code size:      944 (0x03b0) bytes ( 0.72%)
+                      00722 ;                 472 (0x01d8) words
+                      00723 ; udata size:      16 (0x0010) bytes ( 0.42%)
+                      00724 ; access size:      6 (0x0006) bytes
+                      00725 
+                      00726 
+                      00727         end
+gpasm-1.4.0 #1107 (May  9 2015) build/sdcc/pr   12-2-2016  22:31:28         PAGE 17
+
+
+SYMBOL TABLE
+  LABEL                             VALUE
+
+FSR0L                             00000FE9
+FSR1H                             00000FE2
+FSR1L                             00000FE1
+FSR2H                             00000FDA
+FSR2L                             00000FD9
+POSTDEC1                          00000FE5
+POSTINC1                          00000FE6
+PREINC1                           00000FE4
+PRODH                             00000FF4
+PRODL                             00000FF3
+STATUS                            00000FD8
+_00111_DS_                        0000010A
+_00114_DS_                        00000130
+_00118_DS_                        0000019A
+_00121_DS_                        000002C0
+_00138_DS_                        0000006C
+_ADCON0                           00000000
+_ADCON0bits                       00000000
+_ADCON1                           00000000
+_ADCON1bits                       00000000
+_ADCON2                           00000000
+_ADCON2bits                       00000000
+_ADRES                            00000000
+_ADRESH                           00000000
+_ADRESL                           00000000
+_BAUDCON                          00000000
+_BAUDCONbits                      00000000
+_BAUDCTL                          00000000
+_BAUDCTLbits                      00000000
+_BSR                              00000000
+_CCP1CON                          00000000
+_CCP1CONbits                      00000000
+_CCP2CON                          00000000
+_CCP2CONbits                      00000000
+_CCPR1                            00000000
+_CCPR1H                           00000000
+_CCPR1L                           00000000
+_CCPR2                            00000000
+_CCPR2H                           00000000
+_CCPR2L                           00000000
+_CMCON                            00000000
+_CMCONbits                        00000000
+_CVRCON                           00000000
+_CVRCONbits                       00000000
+_DDRA                             00000000
+_DDRAbits                         00000000
+_DDRB                             00000000
+_DDRBbits                         00000000
+_DDRC                             00000000
+_DDRCbits                         00000000
+_DDRD                             00000000
+_DDRDbits                         00000000
+_DDRE                             00000000
+gpasm-1.4.0 #1107 (May  9 2015) build/sdcc/pr   12-2-2016  22:31:28         PAGE 18
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+_DDREbits                         00000000
+_ECCP1AS                          00000000
+_ECCP1ASbits                      00000000
+_EEADR                            00000000
+_EEADRH                           00000000
+_EECON1                           00000000
+_EECON1bits                       00000000
+_EECON2                           00000000
+_EEDATA                           00000000
+_FSR0H                            00000000
+_FSR0L                            00000000
+_FSR1H                            00000000
+_FSR1L                            00000000
+_FSR2H                            00000000
+_FSR2L                            00000000
+_HLVDCON                          00000000
+_HLVDCONbits                      00000000
+_INDF0                            00000000
+_INDF1                            00000000
+_INDF2                            00000000
+_INTCON                           00000000
+_INTCON2                          00000000
+_INTCON2bits                      00000000
+_INTCON3                          00000000
+_INTCON3bits                      00000000
+_INTCONbits                       00000000
+_IPR1                             00000000
+_IPR1bits                         00000000
+_IPR2                             00000000
+_IPR2bits                         00000000
+_LATA                             00000000
+_LATAbits                         00000000
+_LATB                             00000000
+_LATBbits                         00000000
+_LATC                             00000000
+_LATCbits                         00000000
+_LATD                             00000000
+_LATDbits                         00000000
+_LATE                             00000000
+_LATEbits                         00000000
+_LVDCON                           00000000
+_LVDCONbits                       00000000
+_OSCCON                           00000000
+_OSCCONbits                       00000000
+_OSCTUNE                          00000000
+_OSCTUNEbits                      00000000
+_PC                               00000000
+_PCL                              00000000
+_PCLATH                           00000000
+_PCLATU                           00000000
+_PIE1                             00000000
+_PIE1bits                         00000000
+_PIE2                             00000000
+gpasm-1.4.0 #1107 (May  9 2015) build/sdcc/pr   12-2-2016  22:31:28         PAGE 19
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+_PIE2bits                         00000000
+_PIR1                             00000000
+_PIR1bits                         00000000
+_PIR2                             00000000
+_PIR2bits                         00000000
+_PLUSW0                           00000000
+_PLUSW1                           00000000
+_PLUSW2                           00000000
+_PORTA                            00000000
+_PORTAbits                        00000000
+_PORTB                            00000000
+_PORTBbits                        00000000
+_PORTC                            00000000
+_PORTCbits                        00000000
+_PORTD                            00000000
+_PORTDbits                        00000000
+_PORTE                            00000000
+_PORTEbits                        00000000
+_POSTDEC0                         00000000
+_POSTDEC1                         00000000
+_POSTDEC2                         00000000
+_POSTINC0                         00000000
+_POSTINC1                         00000000
+_POSTINC2                         00000000
+_PR2                              00000000
+_PREINC0                          00000000
+_PREINC1                          00000000
+_PREINC2                          00000000
+_PROD                             00000000
+_PRODH                            00000000
+_PRODL                            00000000
+_PWM1CON                          00000000
+_PWM1CONbits                      00000000
+_RCON                             00000000
+_RCONbits                         00000000
+_RCREG                            00000000
+_RCSTA                            00000000
+_RCSTAbits                        00000000
+_RF24M_begin                      00000000
+_RF24M_checkConnection            00000000
+_RF24M_init                       00000000
+_RF24M_renewAddress               00000000
+_RF24M_setNodeID                  00000000
+_RF24M_update                     00000000
+_RF24M_write                      00000000
+_RF24N_available                  00000000
+_RF24N_init                       00000000
+_RF24N_read                       00000000
+_RF24_init                        00000000
+_SPBRG                            00000000
+_SPBRGH                           00000000
+_SSPADD                           00000000
+_SSPBUF                           00000000
+gpasm-1.4.0 #1107 (May  9 2015) build/sdcc/pr   12-2-2016  22:31:28         PAGE 20
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+_SSPCON1                          00000000
+_SSPCON1bits                      00000000
+_SSPCON2                          00000000
+_SSPCON2bits                      00000000
+_SSPSTAT                          00000000
+_SSPSTATbits                      00000000
+_STATUS                           00000000
+_STATUSbits                       00000000
+_STKPTR                           00000000
+_STKPTRbits                       00000000
+_Serial_begin                     00000000
+_Serial_print                     00000000
+_Serial_println                   00000000
+_T0CON                            00000000
+_T0CONbits                        00000000
+_T1CON                            00000000
+_T1CONbits                        00000000
+_T2CON                            00000000
+_T2CONbits                        00000000
+_T3CON                            00000000
+_T3CONbits                        00000000
+_TABLAT                           00000000
+_TBLPTR                           00000000
+_TBLPTRH                          00000000
+_TBLPTRL                          00000000
+_TBLPTRU                          00000000
+_TMR0                             00000000
+_TMR0H                            00000000
+_TMR0L                            00000000
+_TMR1                             00000000
+_TMR1H                            00000000
+_TMR1L                            00000000
+_TMR2                             00000000
+_TMR3                             00000000
+_TMR3H                            00000000
+_TMR3L                            00000000
+_TOS                              00000000
+_TOSH                             00000000
+_TOSL                             00000000
+_TOSU                             00000000
+_TRISA                            00000000
+_TRISAbits                        00000000
+_TRISB                            00000000
+_TRISBbits                        00000000
+_TRISC                            00000000
+_TRISCbits                        00000000
+_TRISD                            00000000
+_TRISDbits                        00000000
+_TRISE                            00000000
+_TRISEbits                        00000000
+_TXREG                            00000000
+_TXSTA                            00000000
+_TXSTAbits                        00000000
+gpasm-1.4.0 #1107 (May  9 2015) build/sdcc/pr   12-2-2016  22:31:28         PAGE 21
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+_WDTCON                           00000000
+_WDTCONbits                       00000000
+_WREG                             00000000
+__18F4620                         00000001
+__ACC_RAM_LOW_END                 0000007F
+__CODE_END                        0000FFFF
+__CODE_START                      00000000
+__EEPROM_END                      00F003FF
+__EEPROM_START                    00F00000
+__VECTOR_INT_HIGH                 00000008
+__VECTOR_INT_LOW                  00000018
+__VECTOR_RESET                    00000000
+___str_0                          000000B8
+___str_1                          000000D2
+___str_2                          000000E4
+___str_3                          000000F8
+___str_4                          00000102
+___str_5                          00000114
+_displayTimer                     00000000
+_itoa_                            00000000
+_loop                             00000000
+_loop_header_2_206                00000000
+_loop_payload_2_206               00000000
+_millis                           00000000
+_mtime                            00000000
+_setup                            00000000
+_stdin                            00000000
+_stdout                           00000000
+r0x00                             00000000
+r0x01                             00000001
+r0x02                             00000002
+r0x03                             00000003
+r0x04                             00000004
+r0x05                             00000005
+
+Errors   :     0
+Warnings :     0 reported,     0 suppressed
+Messages :   105 reported,     0 suppressed
+
+

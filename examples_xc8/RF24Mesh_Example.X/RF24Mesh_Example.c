@@ -8,16 +8,16 @@
 */
 
 
-#include "RF24_c.h"
-#include "RF24Network_c.h"
-#include "RF24Mesh_c.h"
+#include "RF24_cg.h"
+#include "RF24Network_cg.h"
+#include "RF24Mesh_cg.h"
 #include "serial.h"
 
 
 /**** Configure the nrf24l01 CE and CS pins ****/
-RF24 radio;
-RF24Network network;
-RF24Mesh mesh;
+//RF24 radio;
+//RF24Network network;
+//RF24Mesh mesh_;
 
 /**
    User Configuration: nodeID - A unique identifier for each radio. Allows addressing
@@ -40,17 +40,17 @@ typedef struct{
 
 void setup() {
 
-  RF24_init(&radio,36,35);
-  RF24N_init(&network,&radio);
-  RF24M_init(&mesh,&radio,&network); 
+  RF24_init(36,35);
+  RF24N_init();
+  RF24M_init(); 
   
   Serial_begin(115200);
   //printf_begin();
   // Set the nodeID manually
-  RF24M_setNodeID(&mesh,nodeID);    
+  RF24M_setNodeID(nodeID);    
   // Connect to the mesh
   Serial_println(F("Connecting to the mesh..."));
-  RF24M_begin(&mesh,MESH_DEFAULT_CHANNEL, RF24_1MBPS, MESH_RENEWAL_TIMEOUT );
+  RF24M_begin(MESH_DEFAULT_CHANNEL, RF24_1MBPS, MESH_RENEWAL_TIMEOUT );
 
 }
 
@@ -58,20 +58,20 @@ void setup() {
 
 void loop() {
 
-  RF24M_update(&mesh);
+  RF24M_update();
 
   // Send to the master node every second
   if (millis() - displayTimer >= 1000) {
     displayTimer = millis();
 
     // Send an 'M' type message containing the current millis()
-    if (!RF24M_write(&mesh,&displayTimer, 'M', sizeof(displayTimer),0)) {
+    if (!RF24M_write(&displayTimer, 'M', sizeof(displayTimer),0)) {
 
       // If a write fails, check connectivity to the mesh network
-      if ( ! RF24M_checkConnection(&mesh) ) {
+      if ( ! RF24M_checkConnection() ) {
         //refresh the network address
         Serial_println("Renewing Address");
-        RF24M_renewAddress(&mesh,MESH_RENEWAL_TIMEOUT);
+        RF24M_renewAddress(MESH_RENEWAL_TIMEOUT);
       } else {
         Serial_println("Send fail, Test OK");
       }
@@ -80,10 +80,10 @@ void loop() {
     }
   }
 
-  while (RF24N_available(&network)) {
+  while (RF24N_available()) {
     RF24NetworkHeader header;
     payload_t payload;
-    RF24N_read(&network, &header, &payload, sizeof(payload));
+    RF24N_read( &header, &payload, sizeof(payload));
     Serial_print("Received packet #");
     Serial_print(itoa_(payload.counter));
     Serial_print(" at ");
