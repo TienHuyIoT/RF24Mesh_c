@@ -588,7 +588,7 @@ void RF24M_DHCP(void){
 		 mesh.doDHCP = 0;
   }else{ return; }
 
-    memcpy(&header,RF24N_getFrame_buffer,sizeof(RF24NetworkHeader));	
+    memcpy(&header,RF24N_getFrame_buffer(),sizeof(RF24NetworkHeader));	
     
     // Get the unique id of the requester
     from_id = header.reserved;
@@ -639,7 +639,7 @@ void RF24M_DHCP(void){
           }
           Serial.println(addr);
         #else
-          printf("ID: %d ADDR: 0%o\n", addrList[i].nodeID,addrList[i].address);
+          printf("ID: %d ADDR: 0%o\n", mesh.addrList[i].nodeID,mesh.addrList[i].address);
         #endif
       #endif
         if(  (mesh.addrList[i].address == newAddress && mesh.addrList[i].nodeID != from_id ) || newAddress == MESH_DEFAULT_ADDRESS){
@@ -693,5 +693,22 @@ void RF24M_DHCP(void){
 }
 
 /*****************************************************/
+uint16_t RF24M_getCurrentAddress(void)
+{
+  return mesh.mesh_address;
+}
+/*****************************************************/
+
+#if !defined RF24TINY  
+uint8_t RF24M_getAddrListTop(void)
+{
+  return mesh.addrListTop;       /**< The number of entries in the assigned address list */
+}
+
+addrListStruct * RF24M_getAddrList(void)
+{
+  return mesh.addrList;
+}
+#endif
 
 #endif

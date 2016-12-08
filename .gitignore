@@ -1,1 +1,3 @@
-/examples_xc8/RF24Mesh_Example.X/dist/sdcc/
+/examples_xc8/RF24Mesh_Example.X/dist/
+/examples_xc8/RF24Mesh_Example.X/build/
+/examples_xc8/RF24Mesh_Example.X/debug/

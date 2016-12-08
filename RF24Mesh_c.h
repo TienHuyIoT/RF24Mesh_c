@@ -244,6 +244,8 @@ typedef struct
   //uint16_t RF24M_renewAddress(RF24Mesh* mesh, uint32_t timeout=MESH_RENEWAL_TIMEOUT);
   uint16_t RF24M_renewAddress( uint32_t timeout);
   
+  // return Returns the internal assigned RF24Network address
+  uint16_t RF24M_getCurrentAddress(void);
   /**
    * Releases the currently assigned address lease. Useful for nodes that will be sleeping etc.
    * @note Nodes should ensure that addresses are releases successfully prior to renewal.
@@ -305,6 +307,10 @@ typedef struct
   uint8_t RF24M_requestAddress(uint8_t level); /**< Actual requesting of the address once a contact node is discovered or supplied **/
   uint8_t RF24M_waitForAvailable(uint32_t timeout); /**< Waits for data to become available */
 
+#if !defined RF24TINY  
+  uint8_t RF24M_getAddrListTop(void);
+  addrListStruct * RF24M_getAddrList(void);
+#endif
 
 #ifdef __cplusplus
  }

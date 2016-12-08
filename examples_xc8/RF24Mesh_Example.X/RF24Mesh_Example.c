@@ -8,9 +8,9 @@
 */
 
 
-#include "RF24_cg.h"
-#include "RF24Network_cg.h"
-#include "RF24Mesh_cg.h"
+#include "RF24_c.h"
+#include "RF24Network_c.h"
+#include "RF24Mesh_c.h"
 #include "serial.h"
 
 
@@ -40,7 +40,7 @@ typedef struct{
 
 void setup() {
 
-  RF24_init(36,35);
+  RF24_init();//pins are defined in xc8_config.h
   RF24N_init();
   RF24M_init(); 
   

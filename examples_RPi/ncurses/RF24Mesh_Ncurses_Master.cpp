@@ -25,9 +25,9 @@
 #include <RF24_c/RF24_c.h>
 #include <RF24Network_c/RF24Network_c.h>
 
-RF24 radio;  
-RF24Network network;
-RF24Mesh mesh;
+//RF24 radio;  
+//RF24Network network;
+//RF24Mesh mesh;
 
 void printNodes(uint8_t boldID);
 void pingNode(uint8_t listNo);
@@ -38,14 +38,14 @@ uint16_t failID = 0;
 
 int main()
 {	
-RF24_init2(&radio,RPI_V2_GPIO_P1_15, BCM2835_SPI_CS0, BCM2835_SPI_SPEED_8MHZ);  
-RF24N_init(&network,&radio);
-RF24M_init(&mesh,&radio,&network);
+RF24_init2(RPI_V2_GPIO_P1_15, BCM2835_SPI_CS0, BCM2835_SPI_SPEED_8MHZ);  
+RF24N_init();
+RF24M_init();
 
     printf("Establishing mesh...\n");
-	RF24M_setNodeID(&mesh,0);
-        RF24M_begin(&mesh,MESH_DEFAULT_CHANNEL,RF24_1MBPS,MESH_RENEWAL_TIMEOUT );
-	RF24_printDetails(&radio);
+	RF24M_setNodeID(0);
+        RF24M_begin(MESH_DEFAULT_CHANNEL,RF24_1MBPS,MESH_RENEWAL_TIMEOUT );
+	RF24_printDetails();
 
 	initscr();			/* Start curses mode 		  */
 	start_color();
@@ -66,17 +66,17 @@ while(1)
 {
 
     // Call mesh.update to keep the network updated
-    RF24M_update(&mesh);
+    RF24M_update();
     // In addition, keep the 'DHCP service' running on the master node so addresses will
     // be assigned to the sensor nodes
-	RF24M_DHCP(&mesh);
+	RF24M_DHCP();
     // Wait until a sensor node is connected
-	if(sizeof(mesh.addrList) < 1){continue; }
+	if(sizeof(RF24M_getAddrList()) < 1){continue; }
 	
 	// Check for incoming data from the sensors
-    while(RF24N_available(&network)){    
+    while(RF24N_available()){    
 		RF24NetworkHeader header;
-		RF24N_peek(&network,&header);
+		RF24N_peek(&header);
 	
 		uint8_t boldID = 0;
 		
@@ -90,16 +90,16 @@ while(1)
 		attroff(A_BOLD | COLOR_PAIR(1));	
 		
 		// Read the network payload
-		RF24N_read(&network,&header,0,0);
+		RF24N_read(&header,0,0);
 		
 		// Display the header info
 		mvprintw(3,0," HeaderID: %u  \n Type: %d  \n From: 0%o  \n ",header.id,header.type,header.from_node);
 
 		//refresh();
 		//for (std::map<char,uint16_t>::iterator _it=mesh.addrMap.begin(); _it!=mesh.addrMap.end(); _it++){
-		for(uint8_t i=0; i<mesh.addrListTop; i++){
-			if(header.from_node == mesh.addrList[i].address){
-				boldID = mesh.addrList[i].nodeID;
+		for(uint8_t i=0; i < RF24M_getAddrListTop(); i++){
+			if(header.from_node == RF24M_getAddrList()[i].address){
+				boldID = RF24M_getAddrList()[i].nodeID;
 			}
 		}
 		printNodes(boldID);		
@@ -118,9 +118,9 @@ while(1)
   }
   
   // Ping each connected node, one per second
-  if(millis()-pingTimer>1003 && sizeof(mesh.addrList) > 0){
+  if(millis()-pingTimer>1003 && sizeof(RF24M_getAddrList()) > 0){
     pingTimer=millis();
-	if(	nodeCounter == mesh.addrListTop){ // if(mesh.addrMap.size() > 1){ it=mesh.addrMap.begin(); } continue;}
+	if(	nodeCounter == RF24M_getAddrListTop()){ // if(mesh.addrMap.size() > 1){ it=mesh.addrMap.begin(); } continue;}
 		nodeCounter = 0;
 	}
 	pingNode(nodeCounter);
@@ -152,15 +152,15 @@ void printNodes(uint8_t boldID){
    mvprintw(xCoord++,27,"[Address Assignments]\n");
    attroff(A_BOLD | COLOR_PAIR(1));
   //for (std::map<char,uint16_t>::iterator it=mesh.addrMap.begin(); it!=mesh.addrMap.end(); ++it){
-  for( uint8_t i=0; i<mesh.addrListTop; i++){
+  for( uint8_t i=0; i< RF24M_getAddrListTop(); i++){
     //if( failID == it->first){
-	if( failID == mesh.addrList[i].nodeID){
+	if( failID == RF24M_getAddrList()[i].nodeID){
 		attron(COLOR_PAIR(2));
 	}else
-	if( boldID == mesh.addrList[i].nodeID ){
+	if( boldID == RF24M_getAddrList()[i].nodeID ){
 		attron(A_BOLD | COLOR_PAIR(1));
 	}
-	mvprintw(xCoord++,28,"ID: %d  Network: 0%o   ",mesh.addrList[i].nodeID,mesh.addrList[i].address);
+	mvprintw(xCoord++,28,"ID: %d  Network: 0%o   ",RF24M_getAddrList()[i].nodeID,RF24M_getAddrList()[i].address);
 	attroff(A_BOLD | COLOR_PAIR(1));
 	attroff(COLOR_PAIR(2));
   }
@@ -176,17 +176,17 @@ void pingNode(uint8_t listNo){
    attroff(A_BOLD | COLOR_PAIR(1));
 
     RF24NetworkHeader headers;
-    RF24NH_init(&headers,mesh.addrList[listNo].address,NETWORK_PING);
+    RF24NH_init(&headers,RF24M_getAddrList()[listNo].address,NETWORK_PING);
 	uint32_t pingtime=millis();
 	bool ok=0;
 	if(headers.to_node){
-		ok = RF24N_write_m(&network,&headers,0,0);
-		if(ok && failID == mesh.addrList[listNo].nodeID){ failID = 0; }
-		if(!ok){ failID = mesh.addrList[listNo].nodeID; }
+		ok = RF24N_write_m(&headers,0,0);
+		if(ok && failID == RF24M_getAddrList()[listNo].nodeID){ failID = 0; }
+		if(!ok){ failID = RF24M_getAddrList()[listNo].nodeID; }
 	}
 	pingtime = millis()-pingtime;
-	mvprintw(12,0," ID:%d    ",mesh.addrList[listNo].nodeID);
-	mvprintw(13,0," Net:0%o    ",mesh.addrList[listNo].address);
+	mvprintw(12,0," ID:%d    ",RF24M_getAddrList()[listNo].nodeID);
+	mvprintw(13,0," Net:0%o    ",RF24M_getAddrList()[listNo].address);
 	mvprintw(14,0," Time:%ums       ",pingtime);
 	
 	if(ok || !headers.to_node){	mvprintw(15,0," OK  ");
