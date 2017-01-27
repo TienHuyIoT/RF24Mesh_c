@@ -14,7 +14,7 @@
   */
   
 #include "RF24Mesh_c/RF24Mesh_c.h"  
-#include <RF24_c/RF24_c.h>
+#include <RF24/RF24.h>
 #include <RF24Network_c/RF24Network_c.h>
 
 

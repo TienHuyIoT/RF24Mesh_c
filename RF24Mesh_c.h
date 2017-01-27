@@ -60,11 +60,11 @@ extern "C" {
 #include "RF24Mesh_c_config.h"
 
 #if defined (__linux) && !defined(__ARDUINO_X86__)
-  #include <RF24_c/RF24_c.h>
+  #include <RF24/RF24.h>
   #include <RF24Network_c/RF24Network_c.h>
   #define RF24_LINUX
 #else
-  #include <RF24_c.h>
+  #include <RF24.h>
   #include <RF24Network_c.h>
 #endif
 
