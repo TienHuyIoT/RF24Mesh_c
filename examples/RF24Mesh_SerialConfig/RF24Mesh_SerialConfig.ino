@@ -9,7 +9,7 @@
 #include "RF24Network.h"
 #include "RF24.h"
 #include "RF24Mesh.h"
-#include <SPI.h>
+//#include <SPI.h>
 #include <printf.h>
 
 /** Configure the nrf24l01 CE and CS pins */

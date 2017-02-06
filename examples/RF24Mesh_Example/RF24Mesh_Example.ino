@@ -11,13 +11,14 @@
 #include "RF24.h"
 #include "RF24Network.h"
 #include "RF24Mesh.h"
-#include "serial.h"
+//#include <SPI.h>
+//#include <printf.h>
 
 
 /**** Configure the nrf24l01 CE and CS pins ****/
-//RF24 radio;
-//RF24Network network;
-//RF24Mesh mesh_;
+RF24 radio(7, 8);
+RF24Network network(radio);
+RF24Mesh mesh(radio, network);
 
 /**
    User Configuration: nodeID - A unique identifier for each radio. Allows addressing
@@ -33,61 +34,56 @@
 
 uint32_t displayTimer = 0;
 
-typedef struct{
-  uint32_t ms;
-  uint32_t counter;
-}payload_t;
+struct payload_t {
+  unsigned long ms;
+  unsigned long counter;
+};
 
 void setup() {
 
-  RF24_init();//pins are defined in xc8_config.h
-  RF24N_init();
-  RF24M_init(); 
-  
-  Serial_begin(115200);
+  Serial.begin(115200);
   //printf_begin();
   // Set the nodeID manually
-  RF24M_setNodeID(nodeID);    
+  mesh.setNodeID(nodeID);
   // Connect to the mesh
-  Serial_println(F("Connecting to the mesh..."));
-  RF24M_begin(MESH_DEFAULT_CHANNEL, RF24_1MBPS, MESH_RENEWAL_TIMEOUT );
-
+  Serial.println(F("Connecting to the mesh..."));
+  mesh.begin();
 }
 
 
 
 void loop() {
 
-  RF24M_update();
+  mesh.update();
 
   // Send to the master node every second
   if (millis() - displayTimer >= 1000) {
     displayTimer = millis();
 
     // Send an 'M' type message containing the current millis()
-    if (!RF24M_write(&displayTimer, 'M', sizeof(displayTimer),0)) {
+    if (!mesh.write(&displayTimer, 'M', sizeof(displayTimer))) {
 
       // If a write fails, check connectivity to the mesh network
-      if ( ! RF24M_checkConnection() ) {
+      if ( ! mesh.checkConnection() ) {
         //refresh the network address
-        Serial_println("Renewing Address");
-        RF24M_renewAddress(MESH_RENEWAL_TIMEOUT);
+        Serial.println("Renewing Address");
+        mesh.renewAddress();
       } else {
-        Serial_println("Send fail, Test OK");
+        Serial.println("Send fail, Test OK");
       }
     } else {
-      Serial_print("Send OK: "); Serial_println(itoa_(displayTimer));
+      Serial.print("Send OK: "); Serial.println(displayTimer);
     }
   }
 
-  while (RF24N_available()) {
-    RF24NetworkHeader_ header;
+  while (network.available()) {
+    RF24NetworkHeader header;
     payload_t payload;
-    RF24N_read( &header, &payload, sizeof(payload));
-    Serial_print("Received packet #");
-    Serial_print(itoa_(payload.counter));
-    Serial_print(" at ");
-    Serial_println(itoa_(payload.ms));
+    network.read(header, &payload, sizeof(payload));
+    Serial.print("Received packet #");
+    Serial.print(payload.counter);
+    Serial.print(" at ");
+    Serial.println(payload.ms);
   }
 }
 

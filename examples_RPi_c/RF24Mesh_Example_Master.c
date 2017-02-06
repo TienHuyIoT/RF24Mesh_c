@@ -18,45 +18,49 @@
 #include <RF24Network/RF24Network.h>
 
 
-RF24 radio(RPI_V2_GPIO_P1_15, BCM2835_SPI_CS0, BCM2835_SPI_SPEED_8MHZ);  
-RF24Network network(radio);
-RF24Mesh mesh(radio,network);
+//RF24 radio;  
+//RF24Network network;
+//RF24Mesh mesh;
 
 
 
 int main(int argc, char** argv) {
+
+RF24_init2(RPI_V2_GPIO_P1_15, BCM2835_SPI_CS0, BCM2835_SPI_SPEED_8MHZ);  
+RF24N_init();
+RF24M_init();
   
   // Set the nodeID to 0 for the master node
-  mesh.setNodeID(0);
+  RF24M_setNodeID(0);
   // Connect to the mesh
   printf("start\n");
-  mesh.begin();
-  radio.printDetails();
+  RF24M_begin( MESH_DEFAULT_CHANNEL, RF24_1MBPS, MESH_RENEWAL_TIMEOUT );
+  RF24_printDetails();
 
 while(1)
 {
   
   // Call network.update as usual to keep the network updated
-  mesh.update();
+  RF24M_update();
 
   // In addition, keep the 'DHCP service' running on the master node so addresses will
   // be assigned to the sensor nodes
-  mesh.DHCP();
+  RF24M_DHCP();
   
   
   // Check for incoming data from the sensors
-  while(network.available()){
+  while(RF24N_available()){
 //    printf("rcv\n");
-    RF24NetworkHeader header;
-    network.peek(header);
+    RF24NetworkHeader_ header;
+    RF24N_peek(&header);
     
     uint32_t dat=0;
     switch(header.type){
       // Display the incoming millis() values from the sensor nodes
-      case 'M': network.read(header,&dat,sizeof(dat)); 
+      case 'M': RF24N_read(&header,&dat,sizeof(dat)); 
                 printf("Rcv %u from 0%o\n",dat,header.from_node);
                  break;
-      default:  network.read(header,0,0); 
+      default:  RF24N_read(&header,0,0); 
                 printf("Rcv bad type %d from 0%o\n",header.type,header.from_node); 
                 break;
     }

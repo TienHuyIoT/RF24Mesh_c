@@ -57,15 +57,15 @@ extern "C" {
 #endif
 
 
-#include "RF24Mesh_c_config.h"
+#include "RF24Mesh_config.h"
 
 #if defined (__linux) && !defined(__ARDUINO_X86__)
   #include <RF24/RF24.h>
-  #include <RF24Network_c/RF24Network_c.h>
+  #include <RF24Network/RF24Network.h>
   #define RF24_LINUX
 #else
   #include <RF24.h>
-  #include <RF24Network_c.h>
+  #include <RF24Network.h>
 #endif
 
   #include <stddef.h>
@@ -136,7 +136,7 @@ typedef struct
   uint8_t radio_channel;
   uint16_t lastID,lastAddress;
 
- }RF24Mesh;
+ }RF24Mesh_;
  
 
 
@@ -303,7 +303,7 @@ typedef struct
    */
   void RF24M_setStaticAddress(uint8_t nodeID, uint16_t address);
   
-  uint8_t RF24M_findNodes(RF24NetworkHeader* header, uint8_t level, uint16_t *address); /**< Broadcasts to all multicast levels to find available nodes **/
+  uint8_t RF24M_findNodes(RF24NetworkHeader_* header, uint8_t level, uint16_t *address); /**< Broadcasts to all multicast levels to find available nodes **/
   uint8_t RF24M_requestAddress(uint8_t level); /**< Actual requesting of the address once a contact node is discovered or supplied **/
   uint8_t RF24M_waitForAvailable(uint32_t timeout); /**< Waits for data to become available */
 
@@ -316,7 +316,13 @@ typedef struct
  }
 #endif
 
- #endif
+
+#ifdef __cplusplus
+#include"cpp_wrapper.h" 
+#endif
+
+
+#endif
  
  
  /**

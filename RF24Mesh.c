@@ -18,13 +18,13 @@
 
 
 
-#include "RF24Mesh_c.h"
-#include "RF24Mesh_c_config.h"
+#include "RF24Mesh.h"
+#include "RF24Mesh_config.h"
 #if defined (__linux) && !defined(__ARDUINO_X86__)
 //#include <fstream>
 #endif
 
-static RF24Mesh mesh;
+static RF24Mesh_ mesh;
 
 void RF24M_init(void)
 {
@@ -76,14 +76,14 @@ uint8_t RF24M_update(void){
 
   if(!RF24M_getNodeID(MESH_BLANK_ID)){
 	if( (type == MESH_ADDR_LOOKUP || type == MESH_ID_LOOKUP)) {
-	  RF24NetworkHeader * header = (RF24NetworkHeader*) RF24N_getFrame_buffer();
+	  RF24NetworkHeader_ * header = (RF24NetworkHeader_*) RF24N_getFrame_buffer();
 	  header->to_node = header->from_node;
 	  
       if(type==MESH_ADDR_LOOKUP){
-	    int16_t returnAddr = RF24M_getAddress(RF24N_getFrame_buffer()[sizeof(RF24NetworkHeader)]);
+	    int16_t returnAddr = RF24M_getAddress(RF24N_getFrame_buffer()[sizeof(RF24NetworkHeader_)]);
         RF24N_write_m(header,&returnAddr,sizeof(returnAddr)); 
       }else{
-        int16_t returnAddr = RF24M_getNodeID(RF24N_getFrame_buffer()[sizeof(RF24NetworkHeader)]);
+        int16_t returnAddr = RF24M_getNodeID(RF24N_getFrame_buffer()[sizeof(RF24NetworkHeader_)]);
         RF24N_write_m(header,&returnAddr,sizeof(returnAddr));        
       }      
 	  //printf("Returning lookup 0%o to 0%o   \n",returnAddr,header.to_node);
@@ -101,7 +101,7 @@ uint8_t RF24M_update(void){
     #if !defined (ARDUINO_ARCH_AVR)
     else 
 	if(type == MESH_ADDR_CONFIRM ){
-        RF24NetworkHeader * header = (RF24NetworkHeader*)RF24N_getFrame_buffer();
+        RF24NetworkHeader_ * header = (RF24NetworkHeader_*)RF24N_getFrame_buffer();
         if(header->from_node == mesh.lastAddress){
             RF24M_setAddress(mesh.lastID,mesh.lastAddress);
         }        
@@ -114,7 +114,7 @@ uint8_t RF24M_update(void){
 }
 
 uint8_t RF24M_write_n( uint16_t to_node, const void* data, uint8_t msg_type, size_t size ){
-    RF24NetworkHeader header; 
+    RF24NetworkHeader_ header; 
     if(mesh.mesh_address == MESH_DEFAULT_ADDRESS){ return 0; }
 	RF24NH_init(&header,to_node,msg_type);	
 	return RF24N_write_m(&header,data,size);	
@@ -165,7 +165,7 @@ uint8_t RF24M_checkConnection(void){
 	uint8_t count = 3;
 	uint8_t ok = 0;
 	while(count-- && mesh.mesh_address != MESH_DEFAULT_ADDRESS){
-        RF24NetworkHeader header;
+        RF24NetworkHeader_ header;
         
         RF24M_update();
         if(RF24_rxFifoFull() || (RF24N_getNetworkFlags() & 1)){
@@ -186,7 +186,7 @@ uint8_t RF24M_checkConnection(void){
 
 int16_t RF24M_getAddress(uint8_t nodeID){
 int16_t address = 0;
-RF24NetworkHeader header;
+RF24NetworkHeader_ header;
 //#if defined (ARDUINO_SAM_DUE) || defined (__linux)
 #if !defined RF24_TINY && !defined(MESH_NOMASTER)
 	if(!RF24M_getNodeID(MESH_BLANK_ID)){ //Master Node
@@ -215,7 +215,7 @@ RF24NetworkHeader header;
       return -1;
     }
     address = 0;
-	memcpy(&address,RF24N_getFrame_buffer()+sizeof(RF24NetworkHeader),sizeof(address));
+	memcpy(&address,RF24N_getFrame_buffer()+sizeof(RF24NetworkHeader_),sizeof(address));
 	return address >= 0 ? address: -2;	
 }
 
@@ -236,7 +236,7 @@ int16_t RF24M_getNodeID(uint16_t address){
             }
         }
     }else{
-      RF24NetworkHeader header;  
+      RF24NetworkHeader_ header;  
       if(mesh.mesh_address == MESH_DEFAULT_ADDRESS){ return -1; }
       RF24NH_init(&header, 00, MESH_ID_LOOKUP );
       if(RF24N_write_m(&header,&address,sizeof(address)) ){
@@ -246,7 +246,7 @@ int16_t RF24M_getNodeID(uint16_t address){
 			if(millis()-timer > timeout){ return -1; }
 		}
 
-        memcpy(&ID,&RF24N_getFrame_buffer()[sizeof(RF24NetworkHeader)],sizeof(ID));
+        memcpy(&ID,&RF24N_getFrame_buffer()[sizeof(RF24NetworkHeader_)],sizeof(ID));
         return ID;
       }
     }
@@ -255,7 +255,7 @@ int16_t RF24M_getNodeID(uint16_t address){
 /*****************************************************/
 
 uint8_t RF24M_releaseAddress(void){
-    RF24NetworkHeader header;
+    RF24NetworkHeader_ header;
         
     if(mesh.mesh_address == MESH_DEFAULT_ADDRESS){ return 0; }
 
@@ -303,7 +303,7 @@ uint16_t RF24M_renewAddress( uint32_t timeout){
 
 uint8_t RF24M_requestAddress(uint8_t level){    
     
-    RF24NetworkHeader header;
+    RF24NetworkHeader_ header;
     uint32_t timr;
     #define MESH_MAXPOLLS 4
     uint16_t contactNode[MESH_MAXPOLLS];
@@ -415,7 +415,7 @@ uint8_t RF24M_requestAddress(uint8_t level){
 	#endif
 
 	//memcpy(&addrResponse,network.frame_buffer+sizeof(RF24NetworkHeader),sizeof(addrResponse));
-    memcpy(&newAddress,RF24N_getFrame_buffer()+sizeof(RF24NetworkHeader),sizeof(newAddress));
+    memcpy(&newAddress,RF24N_getFrame_buffer()+sizeof(RF24NetworkHeader_),sizeof(newAddress));
 
 	if(!newAddress || RF24N_getFrame_buffer()[7] != RF24M_getNodeID(MESH_BLANK_ID) ){
 		#ifdef MESH_DEBUG_SERIAL
@@ -576,7 +576,7 @@ void RF24M_saveDHCP(void){
 #if !defined (RF24_TINY) && !defined(MESH_NOMASTER)
 
 void RF24M_DHCP(void){
-  RF24NetworkHeader header;
+  RF24NetworkHeader_ header;
     uint16_t newAddress;    
     uint16_t fwd_by = 0;
     uint8_t shiftVal = 0;
@@ -588,7 +588,7 @@ void RF24M_DHCP(void){
 		 mesh.doDHCP = 0;
   }else{ return; }
 
-    memcpy(&header,RF24N_getFrame_buffer(),sizeof(RF24NetworkHeader));	
+    memcpy(&header,RF24N_getFrame_buffer(),sizeof(RF24NetworkHeader_));	
     
     // Get the unique id of the requester
     from_id = header.reserved;

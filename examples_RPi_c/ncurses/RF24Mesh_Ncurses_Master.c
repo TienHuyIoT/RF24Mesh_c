@@ -21,9 +21,9 @@
 */
 
 #include <ncurses.h>
-#include "RF24Mesh_c/RF24Mesh_c.h"  
-#include <RF24_c/RF24_c.h>
-#include <RF24Network_c/RF24Network_c.h>
+#include "RF24Mesh/RF24Mesh.h"  
+#include <RF24/RF24.h>
+#include <RF24Network/RF24Network.h>
 
 //RF24 radio;  
 //RF24Network network;
@@ -75,7 +75,7 @@ while(1)
 	
 	// Check for incoming data from the sensors
     while(RF24N_available()){    
-		RF24NetworkHeader header;
+		RF24NetworkHeader_ header;
 		RF24N_peek(&header);
 	
 		uint8_t boldID = 0;
@@ -175,7 +175,7 @@ void pingNode(uint8_t listNo){
    mvprintw(11,0,"[Ping Test]\n");
    attroff(A_BOLD | COLOR_PAIR(1));
 
-    RF24NetworkHeader headers;
+    RF24NetworkHeader_ headers;
     RF24NH_init(&headers,RF24M_getAddrList()[listNo].address,NETWORK_PING);
 	uint32_t pingtime=millis();
 	bool ok=0;

@@ -16,29 +16,25 @@
 #include "RF24Network.h"
 #include "RF24.h"
 #include "RF24Mesh.h"
-
+//#include <SPI.h>
 //Include eeprom.h for AVR (Uno, Nano) etc. except ATTiny
 #include <EEPROM.h>
 
 /***** Configure the chosen CE,CS pins *****/
-//RF24 radio;
-//RF24Network network;
-//RF24Mesh mesh;
+RF24 radio(7,8);
+RF24Network network(radio);
+RF24Mesh mesh(radio,network);
 
 uint32_t displayTimer = 0;
 
 void setup() {
-RF24_init(7,8);
-RF24N_init();
-RF24M_init();
-  
   Serial.begin(115200);
 
   // Set the nodeID to 0 for the master node
-  RF24M_setNodeID(0);
-  Serial.println(RF24M_getNodeID(MESH_BLANK_ID));
+  mesh.setNodeID(0);
+  Serial.println(mesh.getNodeID());
   // Connect to the mesh
-  RF24M_begin(MESH_DEFAULT_CHANNEL,RF24_1MBPS,MESH_RENEWAL_TIMEOUT);
+  mesh.begin();
 
 }
 
@@ -46,23 +42,23 @@ RF24M_init();
 void loop() {    
 
   // Call mesh.update to keep the network updated
-  RF24M_update();
+  mesh.update();
   
   // In addition, keep the 'DHCP service' running on the master node so addresses will
   // be assigned to the sensor nodes
-  RF24M_DHCP();
+  mesh.DHCP();
   
   
   // Check for incoming data from the sensors
-  if(RF24N_available()){
+  if(network.available()){
     RF24NetworkHeader header;
-    RF24N_peek(&header);
+    network.peek(header);
     
     uint32_t dat=0;
     switch(header.type){
       // Display the incoming millis() values from the sensor nodes
-      case 'M': RF24N_read(&header,&dat,sizeof(dat)); Serial.println(dat); break;
-      default: RF24N_read(&header,0,0); Serial.println(header.type);break;
+      case 'M': network.read(header,&dat,sizeof(dat)); Serial.println(dat); break;
+      default: network.read(header,0,0); Serial.println(header.type);break;
     }
   }
   
@@ -70,11 +66,11 @@ void loop() {
     displayTimer = millis();
     Serial.println(" ");
     Serial.println(F("********Assigned Addresses********"));
-     for(int i=0; i< RF24M_getAddrListTop(); i++){
+     for(int i=0; i<mesh.addrListTop; i++){
        Serial.print("NodeID: ");
-       Serial.print(RF24M_getAddrList()[i].nodeID);
+       Serial.print(mesh.addrList[i].nodeID);
        Serial.print(" RF24Network Address: 0");
-       Serial.println(RF24M_getAddrList()[i].address,OCT);
+       Serial.println(mesh.addrList[i].address,OCT);
      }
     Serial.println(F("**********************************"));
   }
