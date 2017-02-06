@@ -237,5 +237,19 @@ public:
   };
   
 
+
+#if !defined RF24TINY  
+  addrListStruct * getAddrList(void)
+  {
+    return RF24M_getAddrList();
+  }
+
+  uint8_t getAddrListTop(void)
+  {
+    return RF24M_getAddrListTop();  
+  };
+#endif
+
+
  };
  

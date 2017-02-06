@@ -78,12 +78,12 @@ void loop() {
   // Send a different message to node 1, containing another counter instead of millis()
   if (millis() - displayTimer > 5000) {
     ctr++;
-    for (int i = 0; i < mesh.addrListTop; i++) {
+    for (int i = 0; i < mesh.getAddrListTop(); i++) {
       payload_t payload = {millis(), ctr};
-      if (mesh.addrList[i].nodeID == 1) {  //Searching for node one from address list
+      if (mesh.getAddrList()[i].nodeID == 1) {  //Searching for node one from address list
         payload = {ctr % 3, ctr};
       }
-      RF24NetworkHeader header(mesh.addrList[i].address, OCT); //Constructing a header
+      RF24NetworkHeader header(mesh.getAddrList()[i].address, OCT); //Constructing a header
       Serial.println( network.write(header, &payload, sizeof(payload)) == 1 ? F("Send OK") : F("Send Fail")); //Sending an message
 
     }

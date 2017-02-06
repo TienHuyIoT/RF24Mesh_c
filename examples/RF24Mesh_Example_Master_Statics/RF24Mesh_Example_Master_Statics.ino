@@ -83,11 +83,11 @@ void loop() {
     displayTimer = millis();
     Serial.println(" ");
     Serial.println(F("********Assigned Addresses********"));
-    for (int i = 0; i < mesh.addrListTop; i++) {
+    for (int i = 0; i < mesh.getAddrListTop(); i++) {
       Serial.print("NodeID: ");
-      Serial.print(mesh.addrList[i].nodeID);
+      Serial.print(mesh.getAddrList()[i].nodeID);
       Serial.print(" RF24Network Address: 0");
-      Serial.println(mesh.addrList[i].address, OCT);
+      Serial.println(mesh.getAddrList()[i].address, OCT);
     }
     Serial.println(F("**********************************"));
   }
