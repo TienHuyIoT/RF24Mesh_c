@@ -74,7 +74,8 @@ while(1)
 	if(sizeof(RF24M_getAddrList()) < 1){continue; }
 	
 	// Check for incoming data from the sensors
-    while(RF24N_available()){    
+    while(RF24N_available()){ 
+                uint8_t i;   
 		RF24NetworkHeader_ header;
 		RF24N_peek(&header);
 	
@@ -97,7 +98,7 @@ while(1)
 
 		//refresh();
 		//for (std::map<char,uint16_t>::iterator _it=mesh.addrMap.begin(); _it!=mesh.addrMap.end(); _it++){
-		for(uint8_t i=0; i < RF24M_getAddrListTop(); i++){
+		for(i=0; i < RF24M_getAddrListTop(); i++){
 			if(header.from_node == RF24M_getAddrList()[i].address){
 				boldID = RF24M_getAddrList()[i].nodeID;
 			}
@@ -146,13 +147,13 @@ while(1)
 
 
 void printNodes(uint8_t boldID){
-
+   uint8_t i; 
    uint8_t xCoord = 2;
    attron(A_BOLD | COLOR_PAIR(1));
    mvprintw(xCoord++,27,"[Address Assignments]\n");
    attroff(A_BOLD | COLOR_PAIR(1));
   //for (std::map<char,uint16_t>::iterator it=mesh.addrMap.begin(); it!=mesh.addrMap.end(); ++it){
-  for( uint8_t i=0; i< RF24M_getAddrListTop(); i++){
+  for( i=0; i< RF24M_getAddrListTop(); i++){
     //if( failID == it->first){
 	if( failID == RF24M_getAddrList()[i].nodeID){
 		attron(COLOR_PAIR(2));
