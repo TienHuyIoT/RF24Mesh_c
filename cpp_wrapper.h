@@ -142,6 +142,11 @@ public:
     return RF24M_renewAddress(timeout);
   };
   
+  // return Returns the internal assigned RF24Network address
+  uint16_t currentAddress(void)
+  {
+    return RF24M_getCurrentAddress();
+  }
   /**
    * Releases the currently assigned address lease. Useful for nodes that will be sleeping etc.
    * @note Nodes should ensure that addresses are releases successfully prior to renewal.
